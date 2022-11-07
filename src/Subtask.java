@@ -1,12 +1,14 @@
-import java.util.ArrayList;
-
 public class Subtask extends Task {
 
-    public Subtask(String taskName, String taskDescription, TaskStatus taskStatus) {
-        super(taskName, taskDescription, taskStatus);
+    protected int epicId;
+
+    public Subtask(String subtaskName, String taskDescription) {
+        super(subtaskName, taskDescription);
     }
-//
-//    public Subtask() {
-//        super();
-//    }
+    public int getEpicId() {
+        return epicId;
+    }
+    public void setEpicId(int epicId) {
+        this.epicId = epicId;
+    }
 }

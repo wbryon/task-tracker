@@ -1,41 +1,50 @@
-import java.util.*;
-
 public class Task {
+    protected String taskName;
+    protected String taskDescription;
+    protected int id;
+    protected Status status;
 
-    private String taskName;
-    private int id;
-    private String taskDescription;
-    private TaskStatus taskStatus;
-    public Task(String taskName, String taskDescription, TaskStatus taskStatus) {
-        setId(TaskManager.getId());
-        setTaskName(taskName);
-        setTaskDescription(taskDescription);
-        setTaskStatus(taskStatus);
+    public Task(String taskName, String taskDescription) {
+        this.taskName = taskName;
+        this.taskDescription = taskDescription;
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
+    }
+
+    public String getTaskDescription() {
+        return taskDescription;
+    }
+
+    public void setTaskDescription(String taskDescription) {
+        this.taskDescription = taskDescription;
     }
 
     public int getId() {
         return id;
     }
-    public String getTaskName() {
-        return taskName;
-    }
-    public String getTaskDescription() {
-        return taskDescription;
-    }
-    public TaskStatus getTaskStatus() {
-        return taskStatus;
-    }
 
     public void setId(int id) {
         this.id = id;
     }
-    public void setTaskDescription(String taskDescription) {
-        this.taskDescription = taskDescription;
+
+    public Status getStatus() {
+        return status;
     }
-    public void setTaskName(String taskName) {
-        this.taskName = taskName;
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
-    public void setTaskStatus(TaskStatus taskStatus) {
-        this.taskStatus = taskStatus;
+
+    @Override
+    public String toString() {
+        return "Задача {" + "название: " + taskName +
+                "; описание: " + taskDescription +
+                "; id: " + id + "; статус: " + status + '}';
     }
 }
