@@ -1,13 +1,29 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
+/**
+ * Класс для создания объектов эпиков
+ */
 public class Epic extends Task {
 
-    List<Subtask> subtasks;
-    public Epic(String taskName, String taskDescription, TaskStatus taskStatus) {
-        super(taskName, taskDescription, taskStatus);
+    protected List<Subtask> subtaskList = new ArrayList<>();
+    public Epic(String taskName, String taskDescription) {
+        super(taskName, taskDescription);
     }
-    public void subTaskList(List<Subtask> subtasks) {
-        this.subtasks = subtasks;
+
+    /**
+     * Метод для добавления подзадачи в список подзадач эпика
+     */
+    public void addSubtask(Subtask subtask) {
+        subtaskList.add(subtask);
+    }
+
+    /**
+     * Переопределённый метод toString
+     */
+    @Override
+    public String toString() {
+        return "Эпик {" + "название: " + taskName +
+                "; описание: " + taskDescription +
+                "; id: " + id + "; статус: " + status + '}';
     }
 }
