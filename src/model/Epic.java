@@ -7,20 +7,23 @@ import java.util.*;
  */
 public class Epic extends Task {
 
-    protected List<Subtask> subtaskList = new ArrayList<>();
+    protected List<Integer> subtasksIds = new ArrayList<>();
     public Epic(String taskName, String taskDescription) {
         super(taskName, taskDescription);
     }
 
-    public List<Subtask> getSubtaskList() {
-        return subtaskList;
+    /**
+     * геттер для получения списка id подзадач эпика
+     */
+    public List<Integer> getSubtasksIds() {
+        return subtasksIds;
     }
 
     /**
-     * Метод для добавления подзадачи в список подзадач эпика
+     * Метод для добавления id подзадачи в список id подзадач эпика
      */
-    public void addSubtask(Subtask subtask) {
-        subtaskList.add(subtask);
+    public void addSubtaskId(Subtask subtask) {
+        subtasksIds.add(subtask.id);
     }
 
     /**

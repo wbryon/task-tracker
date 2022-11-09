@@ -90,6 +90,7 @@ public class TaskManager {
         taskRepo.put(task.getId(), task);
         return task.getId();
     }
+
     /**
      * Метод для создания нового эпика
      */
@@ -109,11 +110,11 @@ public class TaskManager {
             System.out.println("Эпик не найден");
             return;
         }
-        epic.addSubtask(subtask);
         subtask.setId(++generatorId);
         subtask.setStatus(Status.NEW);
-        updateEpicStatus(epic);
+        epic.addSubtaskId(subtask);
         subtaskRepo.put(subtask.getId(), subtask);
+        updateEpicStatus(epic);
     }
 
     /**
@@ -135,6 +136,11 @@ public class TaskManager {
             System.out.println("Удаление эпика невозможно: id не найден");
             return;
         }
+        for (Integer subtaskId : subtaskRepo.keySet()) {
+            if (subtaskRepo.get(subtaskId).getEpicId() == id) {
+                subtaskRepo.remove(getSubtask(subtaskId));
+            }
+        }
         epicRepo.remove(id);
     }
 
@@ -145,6 +151,12 @@ public class TaskManager {
         if (!subtaskRepo.containsKey(id)) {
             System.out.println("Удаление подзадачи невозможно: id не найден");
             return;
+        }
+        for (int epicId : epicRepo.keySet()) {
+            if (epicRepo.get(epicId).getSubtasksIds().contains(id)) {
+                epicRepo.get(epicId).getSubtasksIds().remove(id);
+                break;
+            }
         }
         subtaskRepo.remove(id);
     }
@@ -169,11 +181,12 @@ public class TaskManager {
             return;
         }
         for (int epicId : epicRepo.keySet()) {
-            for (Subtask subtask : epicRepo.get(epicId).getSubtaskList()) {
-                epicRepo.get(epicId).getSubtaskList().remove(subtask);
+            for (Integer subtaskId : epicRepo.get(epicId).getSubtasksIds()) {
+                epicRepo.get(epicId).getSubtasksIds().remove(subtaskId);
             }
         }
         epicRepo.clear();
+        subtaskRepo.clear();
         System.out.println("Все эпики удалены");
     }
 
@@ -186,6 +199,9 @@ public class TaskManager {
             return;
         }
         subtaskRepo.clear();
+        for (int epicId : epicRepo.keySet()) {
+            epicRepo.get(epicId).getSubtasksIds().clear();
+        }
         System.out.println("Все подзадачи удалены");
     }
 
@@ -213,8 +229,8 @@ public class TaskManager {
     /**
      * Метод для получения списка всех подзадач эпика
      */
-    public List<Subtask> getEpicSubtasks(int epicId) {
-        return epicRepo.get(epicId).getSubtaskList();
+    public List<Integer> getEpicSubtasks(int epicId) {
+        return epicRepo.get(epicId).getSubtasksIds();
     }
 
     /**
@@ -255,14 +271,14 @@ public class TaskManager {
     /**
      * Метод для обновления статуса эпика
      */
-    public static void updateEpicStatus(Epic epic) {
-        Set<Status> getStatus = new HashSet();
-        for (Subtask subtask : epic.getSubtaskList()) {
-            getStatus.add(subtask.getStatus());
+    public void updateEpicStatus(Epic epic) {
+        Set<Status> statusChecker = new HashSet();
+        for (Integer subtaskId : epic.getSubtasksIds()) {
+            statusChecker.add(subtaskRepo.get(subtaskId).getStatus());
         }
-        if ((getStatus.contains(Status.NEW) && getStatus.size() == 1) || getStatus.isEmpty()) {
+        if ((statusChecker.contains(Status.NEW) && statusChecker.size() == 1) || statusChecker.isEmpty()) {
             epic.setStatus(Status.NEW);
-        } else if (getStatus.contains(Status.DONE) && getStatus.size() == 1) {
+        } else if (statusChecker.contains(Status.DONE) && statusChecker.size() == 1) {
             epic.setStatus(Status.DONE);
         } else {
             epic.setStatus(Status.IN_PROGRESS);
