@@ -1,3 +1,5 @@
+package model;
+
 import java.util.*;
 
 /**
@@ -8,6 +10,10 @@ public class Epic extends Task {
     protected List<Subtask> subtaskList = new ArrayList<>();
     public Epic(String taskName, String taskDescription) {
         super(taskName, taskDescription);
+    }
+
+    public List<Subtask> getSubtaskList() {
+        return subtaskList;
     }
 
     /**

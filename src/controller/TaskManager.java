@@ -1,4 +1,7 @@
+package controller;
+
 import java.util.*;
+import model.*;
 
 /**
  * Класс, управляющий всеми задачами
@@ -9,6 +12,18 @@ public class TaskManager {
     protected final Map<Integer, Task> taskRepo = new HashMap<>();
     protected final Map<Integer, Epic> epicRepo = new HashMap<>();
     protected final Map<Integer, Subtask> subtaskRepo = new HashMap<>();
+
+    public Map<Integer, Task> getTaskRepo() {
+        return taskRepo;
+    }
+
+    public Map<Integer, Epic> getEpicRepo() {
+        return epicRepo;
+    }
+
+    public Map<Integer, Subtask> getSubtaskRepo() {
+        return subtaskRepo;
+    }
 
     /**
      * Сеттер для id-генератора
@@ -145,8 +160,8 @@ public class TaskManager {
             return;
         }
         for (int epicId : epicRepo.keySet()) {
-            for (Subtask subtask : epicRepo.get(epicId).subtaskList) {
-                epicRepo.get(epicId).subtaskList.remove(subtask);
+            for (Subtask subtask : epicRepo.get(epicId).getSubtaskList()) {
+                epicRepo.get(epicId).getSubtaskList().remove(subtask);
             }
         }
         epicRepo.clear();
@@ -190,7 +205,7 @@ public class TaskManager {
      * Метод для получения списка всех подзадач эпика
      */
     public List<Subtask> getEpicSubtasks(int epicId) {
-        return epicRepo.get(epicId).subtaskList;
+        return epicRepo.get(epicId).getSubtaskList();
     }
 
     /**
@@ -231,10 +246,10 @@ public class TaskManager {
     /**
      * Метод для обновления статуса эпика
      */
-    static void updateEpicStatus(Epic epic) {
+    public static void updateEpicStatus(Epic epic) {
         Set<Status> getStatus = new HashSet();
-        for (Subtask subtask : epic.subtaskList) {
-            getStatus.add(subtask.status);
+        for (Subtask subtask : epic.getSubtaskList()) {
+            getStatus.add(subtask.getStatus());
         }
         if ((getStatus.contains(Status.NEW) && getStatus.size() == 1) || getStatus.isEmpty()) {
             epic.setStatus(Status.NEW);
