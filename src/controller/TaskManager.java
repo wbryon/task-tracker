@@ -35,20 +35,6 @@ public class TaskManager {
     }
 
     /**
-     * Сеттер для id-генератора
-     */
-    public void setGeneratorId(int generatorId) {
-            this.generatorId = generatorId;
-    }
-
-    /**
-     * Геттер для id-генератора
-     */
-    public int getGeneratorId() {
-        return generatorId;
-    }
-
-    /**
      * Метод для получения задачи по идентификатору
      */
     public Task getTask(int id) {
