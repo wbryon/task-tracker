@@ -13,14 +13,23 @@ public class TaskManager {
     protected final Map<Integer, Epic> epicRepo = new HashMap<>();
     protected final Map<Integer, Subtask> subtaskRepo = new HashMap<>();
 
+    /**
+     * Геттер для хранилища задач
+     */
     public Map<Integer, Task> getTaskRepo() {
         return taskRepo;
     }
 
+    /**
+     * Геттер для хранилища Эпиков
+     */
     public Map<Integer, Epic> getEpicRepo() {
         return epicRepo;
     }
 
+    /**
+     * Геттер для хранилища подзадач
+     */
     public Map<Integer, Subtask> getSubtaskRepo() {
         return subtaskRepo;
     }
