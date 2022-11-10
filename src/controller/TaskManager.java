@@ -14,27 +14,6 @@ public class TaskManager {
     protected final Map<Integer, Subtask> subtaskRepo = new HashMap<>();
 
     /**
-     * Геттер для хранилища задач
-     */
-    public Map<Integer, Task> getTaskRepo() {
-        return taskRepo;
-    }
-
-    /**
-     * Геттер для хранилища Эпиков
-     */
-    public Map<Integer, Epic> getEpicRepo() {
-        return epicRepo;
-    }
-
-    /**
-     * Геттер для хранилища подзадач
-     */
-    public Map<Integer, Subtask> getSubtaskRepo() {
-        return subtaskRepo;
-    }
-
-    /**
      * Метод для получения задачи по идентификатору
      */
     public Task getTask(int id) {
@@ -262,7 +241,7 @@ public class TaskManager {
         for (Integer subtaskId : epic.getSubtasksIds()) {
             statusChecker.add(subtaskRepo.get(subtaskId).getStatus());
         }
-        if ((statusChecker.contains(Status.NEW) && statusChecker.size() == 1) || statusChecker.isEmpty()) {
+        if ((Status.NEW.contains(statusChecker) && statusChecker.size() == 1) || statusChecker.isEmpty()) {
             epic.setStatus(Status.NEW);
         } else if (statusChecker.contains(Status.DONE) && statusChecker.size() == 1) {
             epic.setStatus(Status.DONE);

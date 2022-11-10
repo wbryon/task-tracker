@@ -14,8 +14,8 @@ public class Main {
         Task task2 = new Task("Задача 2", "Описание задачи 2");
         int task2Id = taskManager.addNewTask(task2);
 
-        for (int id : taskManager.getTaskRepo().keySet()) {
-            System.out.println(taskManager.getTaskRepo().get(id));
+        for (Task task : taskManager.getTasksList()) {
+            System.out.println(task);
         }
         System.out.println("\n---- Создание эпиков ----\n");
 
@@ -25,8 +25,8 @@ public class Main {
         final int epicId1 = taskManager.addNewEpic(epic1);
         final int epicId2 = taskManager.addNewEpic(epic2);
 
-        for (int epicId : taskManager.getEpicRepo().keySet()) {
-            System.out.println(taskManager.getEpicRepo().get(epicId));
+        for (Epic epic : taskManager.getEpicList()) {
+            System.out.println(epic);
         }
 
         System.out.println("\n---- Добавление подзадач ----\n");
@@ -64,13 +64,16 @@ public class Main {
     }
 
     public static void printTest(TaskManager manager) {
-        for (int id : manager.getTaskRepo().keySet()) {
-            System.out.println(manager.getTaskRepo().get(id));
+        for (Task task : manager.getTasksList()) {
+            System.out.println(task);
         }
-        for (Integer epicId : manager.getEpicRepo().keySet()) {
-            System.out.println("epicId: " + epicId + "; status: " + manager.getEpicRepo().get(epicId).getStatus());
-            for (Integer subtaskId : manager.getEpicRepo().get(epicId).getSubtasksIds()) {
-                System.out.println(manager.getSubtaskRepo().get(subtaskId));
+        for (Epic epic : manager.getEpicList()) {
+            System.out.println("epicId: " + epic.getId() + "; status: " + epic.getStatus());
+
+            for (Subtask subtask : manager.getSubtaskList()) {
+                if (subtask.getEpicId() == epic.getId()) {
+                    System.out.println(subtask);
+                }
             }
         }
     }
