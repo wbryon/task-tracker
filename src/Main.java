@@ -1,10 +1,10 @@
-import controller.TaskManager;
+import controller.InMemoryTaskManager;
 import model.*;
 
 public class Main {
 
     public static void main(String[] args) {
-        TaskManager taskManager = new TaskManager();
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
 
         System.out.println("---- Создание задач ----\n");
 
@@ -45,9 +45,6 @@ public class Main {
 
         task2.setStatus(Status.IN_PROGRESS);
 
-//        for (int id : taskManager.getTaskRepo().keySet()) {
-//            System.out.println(taskManager.getTaskRepo().get(id));
-//        }
         subtask1.setStatus(Status.DONE);
         taskManager.updateEpicStatus(epic1);
         printTest(taskManager);
@@ -55,15 +52,13 @@ public class Main {
         System.out.println("\n---- Удаление задачи и эпика ----\n");
 
         taskManager.deleteTask(task1Id);
-//        for (int id : taskManager.getTaskRepo().keySet()) {
-//            System.out.println(taskManager.getTaskRepo().get(id));
-//        }
+
         taskManager.deleteEpic(epicId2);
         printTest(taskManager);
         System.out.println("\n----------end-------------");
     }
 
-    public static void printTest(TaskManager manager) {
+    public static void printTest(InMemoryTaskManager manager) {
         for (Task task : manager.getTasksList()) {
             System.out.println(task);
         }
