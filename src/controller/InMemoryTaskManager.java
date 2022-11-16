@@ -12,13 +12,32 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, Task> taskRepo = new HashMap<>();
     protected final Map<Integer, Epic> epicRepo = new HashMap<>();
     protected final Map<Integer, Subtask> subtaskRepo = new HashMap<>();
+    private final List<Task> taskViewHistory = new ArrayList<>();
 
     /**
      * Реализация метода, возвращающего последние 10 просмотренных задач
      */
     @Override
     public List<Task> getHistory() {
-        return null;
+        for (int i = 0; i < taskViewHistory.size(); i++) {
+            System.out.println(i + "-> id: " + taskViewHistory.get(i).getId() + "; " +  taskViewHistory.get(i));
+        }
+        return taskViewHistory;
+    }
+    /**
+     * Метод, проверяющий количество просмотренных задач в списке (не > 10)
+     */
+
+    private boolean checkHistoryList() {
+        int historyCount = 10;
+        if (taskViewHistory.size() == historyCount) {
+            for (int i = 0; i < (taskViewHistory.size() - 1); i++) {
+                taskViewHistory.set(i, taskViewHistory.get(i + 1));
+            }
+            taskViewHistory.remove(taskViewHistory.get(taskViewHistory.size() - 1));
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -29,6 +48,11 @@ public class InMemoryTaskManager implements TaskManager {
         if (!taskRepo.containsKey(id)) {
             System.out.println("Задача с таким id не найдена");
             return null;
+        }
+        if (checkHistoryList()) {
+            taskViewHistory.add(taskRepo.get(id));
+        } else {
+            taskViewHistory.add(taskRepo.get(id));
         }
         return taskRepo.get(id);
     }
@@ -42,6 +66,11 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println("Эпик с таким id не найден");
             return null;
         }
+        if (checkHistoryList()) {
+            taskViewHistory.add(epicRepo.get(id));
+        } else {
+            taskViewHistory.add(epicRepo.get(id));
+        }
         return epicRepo.get(id);
     }
 
@@ -53,6 +82,11 @@ public class InMemoryTaskManager implements TaskManager {
         if (!subtaskRepo.containsKey(id)) {
             System.out.println("Подзадача с таким id не найдена");
             return null;
+        }
+        if (checkHistoryList()) {
+            taskViewHistory.add(subtaskRepo.get(id));
+        } else {
+            taskViewHistory.add(subtaskRepo.get(id));
         }
         return subtaskRepo.get(id);
     }

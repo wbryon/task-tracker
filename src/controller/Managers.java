@@ -1,8 +1,9 @@
 package controller;
 
 public class Managers {
+
+    private TaskManager manager = new InMemoryTaskManager();
     TaskManager getDefault() {
-//        return InMemoryHistoryManager;
-        return null;
+        return manager;
     }
 }
