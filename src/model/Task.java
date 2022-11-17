@@ -1,9 +1,9 @@
 package model;
 
 /**
- * Класс для создания объектов задач
+ * Родительский класс для классов SimpleTask, Epic и SubTask
  */
-public class Task {
+public abstract class Task {
     protected String taskName;
     protected String taskDescription;
     protected int id;
@@ -68,15 +68,5 @@ public class Task {
      */
     public void setStatus(Status status) {
         this.status = status;
-    }
-
-    /**
-     * Переопределённый метод toString
-     */
-    @Override
-    public String toString() {
-        return "Задача {" + "название: " + taskName +
-                "; описание: " + taskDescription +
-                "; id: " + id + "; статус: " + status + '}';
     }
 }

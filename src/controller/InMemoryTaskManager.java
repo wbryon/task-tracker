@@ -1,5 +1,4 @@
 package controller;
-
 import java.util.*;
 import model.*;
 
@@ -9,51 +8,34 @@ import model.*;
 public class InMemoryTaskManager implements TaskManager {
     private int generatorId = 0;
 
-    protected final Map<Integer, Task> taskRepo = new HashMap<>();
+    protected final Map<Integer, SimpleTask> taskRepo = new HashMap<>();
     protected final Map<Integer, Epic> epicRepo = new HashMap<>();
-    protected final Map<Integer, Subtask> subtaskRepo = new HashMap<>();
-    private final List<Task> taskViewHistory = new ArrayList<>();
+    protected final Map<Integer, SubTask> subtaskRepo = new HashMap<>();
+
+    private final HistoryManager historyManager = Managers.getDefaultHistory();
 
     /**
-     * Реализация метода, возвращающего последние 10 просмотренных задач
+     * Реализация метода, возвращающего список задач
      */
     @Override
     public List<Task> getHistory() {
-        for (int i = 0; i < taskViewHistory.size(); i++) {
-            System.out.println(i + "-> id: " + taskViewHistory.get(i).getId() + "; " +  taskViewHistory.get(i));
+        for (int i = 0; i < historyManager.getHistory().size(); i++) {
+            System.out.println(i + "-> " + historyManager.getHistory().get(i));
         }
-        return taskViewHistory;
-    }
-    /**
-     * Метод, проверяющий количество просмотренных задач в списке (не > 10)
-     */
-
-    private boolean checkHistoryList() {
-        int historyCount = 10;
-        if (taskViewHistory.size() == historyCount) {
-            for (int i = 0; i < (taskViewHistory.size() - 1); i++) {
-                taskViewHistory.set(i, taskViewHistory.get(i + 1));
-            }
-            taskViewHistory.remove(taskViewHistory.get(taskViewHistory.size() - 1));
-            return true;
-        }
-        return false;
+        System.out.println("-----выполнен метод 'getHistory'-----");
+        return historyManager.getHistory();
     }
 
     /**
      * Реализация метода для получения задачи по идентификатору
      */
     @Override
-    public Task getTask(int id) {
+    public SimpleTask getSimpleTask(int id) {
         if (!taskRepo.containsKey(id)) {
             System.out.println("Задача с таким id не найдена");
             return null;
         }
-        if (checkHistoryList()) {
-            taskViewHistory.add(taskRepo.get(id));
-        } else {
-            taskViewHistory.add(taskRepo.get(id));
-        }
+        historyManager.add(taskRepo.get(id));
         return taskRepo.get(id);
     }
 
@@ -66,11 +48,7 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println("Эпик с таким id не найден");
             return null;
         }
-        if (checkHistoryList()) {
-            taskViewHistory.add(epicRepo.get(id));
-        } else {
-            taskViewHistory.add(epicRepo.get(id));
-        }
+        historyManager.add(epicRepo.get(id));
         return epicRepo.get(id);
     }
 
@@ -78,16 +56,12 @@ public class InMemoryTaskManager implements TaskManager {
      * Реализация метода для получения подзадачи по идентификатору
      */
     @Override
-    public Subtask getSubtask(int id) {
+    public SubTask getSubtask(int id) {
         if (!subtaskRepo.containsKey(id)) {
             System.out.println("Подзадача с таким id не найдена");
             return null;
         }
-        if (checkHistoryList()) {
-            taskViewHistory.add(subtaskRepo.get(id));
-        } else {
-            taskViewHistory.add(subtaskRepo.get(id));
-        }
+        historyManager.add(subtaskRepo.get(id));
         return subtaskRepo.get(id);
     }
 
@@ -95,7 +69,7 @@ public class InMemoryTaskManager implements TaskManager {
      * Реализация метода для создания новой задачи
      */
     @Override
-    public int addNewTask(Task task) {
+    public int addNewSimpleTask(SimpleTask task) {
         task.setId(++generatorId);
         task.setStatus(Status.NEW);
         taskRepo.put(task.getId(), task);
@@ -117,12 +91,13 @@ public class InMemoryTaskManager implements TaskManager {
      * Реализация метода для создания новой подзадачи
      */
     @Override
-    public void addNewSubtask(Subtask subtask) {
+    public void addNewSubtask(SubTask subtask) {
         Epic epic = getEpic(subtask.getEpicId());
         if (epic == null) {
             System.out.println("Эпик не найден");
             return;
         }
+        historyManager.getHistory().remove(historyManager.getHistory().size() - 1);
         subtask.setId(++generatorId);
         subtask.setStatus(Status.NEW);
         epic.addSubtaskId(subtask);
@@ -134,7 +109,7 @@ public class InMemoryTaskManager implements TaskManager {
      * Реализация метода для удаления задачи по идентификатору
      */
     @Override
-    public void deleteTask(int id) {
+    public void deleteSimpleTask(int id) {
         if (!taskRepo.containsKey(id)) {
             System.out.println("Удаление задачи невозможно: id не найден");
             return;
@@ -181,7 +156,7 @@ public class InMemoryTaskManager implements TaskManager {
      * Реализация метода для удаления всех задач
      */
     @Override
-    public void deleteAllTasks() {
+    public void deleteAllSimpleTasks() {
         if (taskRepo.isEmpty()) {
             System.out.println("Список задач пуст");
             return;
@@ -228,7 +203,7 @@ public class InMemoryTaskManager implements TaskManager {
      * Реализация метода для получения списка всех задач
      */
     @Override
-    public ArrayList<Task> getTasksList() {
+    public ArrayList<SimpleTask> getSimpleTaskList() {
         return new ArrayList<>(taskRepo.values());
     }
 
@@ -244,7 +219,7 @@ public class InMemoryTaskManager implements TaskManager {
      * Реализация метода для получения списка всех подзадач
      */
     @Override
-    public ArrayList<Subtask> getSubtaskList() {
+    public ArrayList<SubTask> getSubtaskList() {
         return new ArrayList<>(subtaskRepo.values());
     }
 
@@ -257,10 +232,11 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     /**
-     * Реализация метода для обновления задачи. Новая версия задачи с верным идентификатором передаётся в виде параметра
+     * Реализация метода для обновления задачи.
+     * Новая версия задачи с верным идентификатором передаётся в виде параметра
      */
     @Override
-    public void updateTask(Task task) {
+    public void updateSimpleTask(SimpleTask task) {
         if (!taskRepo.containsKey(task.getId())) {
             System.out.println("Обновление задачи невозможно: id не найден");
             return;
@@ -269,7 +245,8 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     /**
-     * Реализация метода для обновления эпика. Новая версия эпика с верным идентификатором передаётся в виде параметра
+     * Реализация метода для обновления эпика.
+     * Новая версия эпика с верным идентификатором передаётся в виде параметра
      */
     @Override
     public void updateEpic(Epic epic) {
@@ -281,10 +258,11 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     /**
-     * Реализация метода для обновления подзадачи. Новая версия подзадачи с верным идентификатором передаётся в виде параметра
+     * Реализация метода для обновления подзадачи.
+     * Новая версия подзадачи с верным идентификатором передаётся в виде параметра
      */
     @Override
-    public void updateSubtask(Subtask subtask) {
+    public void updateSubtask(SubTask subtask) {
         Epic epic = getEpic(subtask.getEpicId());
         if (epic == null) {
             System.out.println("Эпик не найден");
@@ -302,7 +280,7 @@ public class InMemoryTaskManager implements TaskManager {
         for (Integer subtaskId : epic.getSubtasksIds()) {
             statusChecker.add(subtaskRepo.get(subtaskId).getStatus());
         }
-        if ((Status.NEW.contains(statusChecker) && statusChecker.size() == 1) || statusChecker.isEmpty()) {
+        if ((statusChecker.contains(Status.NEW) && statusChecker.size() == 1) || statusChecker.isEmpty()) {
             epic.setStatus(Status.NEW);
         } else if (statusChecker.contains(Status.DONE) && statusChecker.size() == 1) {
             epic.setStatus(Status.DONE);

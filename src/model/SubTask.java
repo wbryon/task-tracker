@@ -3,11 +3,11 @@ package model;
 /**
  * Класс для создания объектов подзадач
  */
-public class Subtask extends Task {
+public class SubTask extends Task {
 
     protected int epicId;
 
-    public Subtask(String subtaskName, String taskDescription, int epicId) {
+    public SubTask(String subtaskName, String taskDescription, int epicId) {
         super(subtaskName, taskDescription);
         this.epicId = epicId;
     }

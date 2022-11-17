@@ -1,7 +1,19 @@
 package controller;
-
 import model.Task;
+import java.util.List;
 
-public interface HistoryManager<T extends Task> {
-    void add(T task);
+/**
+ * Интерфейс для управления историей просмотров
+ */
+public interface HistoryManager {
+
+    /**
+     * Метод должен помечать задачи как просмотренные
+     */
+    void add(Task task);
+
+    /**
+     * Метод должен возвращать список просмотренных задач
+     */
+    List<Task> getHistory();
 }

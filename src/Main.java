@@ -1,24 +1,34 @@
-import controller.InMemoryTaskManager;
+import controller.Managers;
+import controller.TaskManager;
 import model.*;
 
+/**
+ * Класс, исполняющий программу
+ * @author  Хабибула Тамирбудаев
+ */
 public class Main {
 
+    /**
+     * точка входа в программу
+     */
     public static void main(String[] args) {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
+        Managers manager = new Managers();
+        TaskManager taskManager = manager.getDefault();
 
         System.out.println("---- Создание задач ----\n");
 
-        Task task1 = new Task("Задача 1", "Описание задачи 1");
-        int task1Id = taskManager.addNewTask(task1);
+        SimpleTask task1 = new SimpleTask("Задача 1", "Описание задачи 1");
+        taskManager.addNewSimpleTask(task1);
+        taskManager.getHistory();
 
-        Task task2 = new Task("Задача 2", "Описание задачи 2");
-        int task2Id = taskManager.addNewTask(task2);
+        SimpleTask task2 = new SimpleTask("Задача 2", "Описание задачи 2");
+        taskManager.addNewSimpleTask(task2);
 
-        Task task3 = new Task("Задача 3", "Описание задачи 3");
-        int task3Id = taskManager.addNewTask(task3);
+        SimpleTask task3 = new SimpleTask("Задача 3", "Описание задачи 3");
+        taskManager.addNewSimpleTask(task3);
 
-        Task task4 = new Task("Задача 4", "Описание задачи 4");
-        int task4Id = taskManager.addNewTask(task4);
+        SimpleTask task4 = new SimpleTask("Задача 4", "Описание задачи 4");
+        taskManager.addNewSimpleTask(task4);
 
         Epic epic1 = new Epic("Эпик 1", "Описание эпика 1");
         int epicId1 = taskManager.addNewEpic(epic1);
@@ -26,42 +36,34 @@ public class Main {
         Epic epic2 = new Epic("Эпик 2", "Описание эпика 2");
         int epicId2 = taskManager.addNewEpic(epic2);
 
-        Task task5 = new Task("Задача 5", "Описание задачи 5");
-        int task5Id = taskManager.addNewTask(task5);
+        SimpleTask task5 = new SimpleTask("Задача 5", "Описание задачи 5");
+        taskManager.addNewSimpleTask(task5);
 
-        Task task6 = new Task("Задача 6", "Описание задачи 6");
-        int taskId = taskManager.addNewTask(task6);
+        SimpleTask task6 = new SimpleTask("Задача 6", "Описание задачи 6");
+        taskManager.addNewSimpleTask(task6);
+        taskManager.getEpicList();
 
-        Task task7 = new Task("Задача 7", "Описание задачи 7");
-        int task7Id = taskManager.addNewTask(task7);
+        SimpleTask task7 = new SimpleTask("Задача 7", "Описание задачи 7");
+        taskManager.addNewSimpleTask(task7);
 
-        Subtask subtask1 = new Subtask("Подзадача 1", "Описание подзадачи 1", epicId1);
+        SubTask subtask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", epicId1);
         taskManager.addNewSubtask(subtask1);
 
-        Subtask subtask2 = new Subtask("Подзадача 2", "Описание подзадачи 2", epicId1);
+        SubTask subtask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", epicId1);
         taskManager.addNewSubtask(subtask2);
 
-        Subtask subtask3 = new Subtask("Подзадача 3", "Описание подзадачи 3", epicId2);
+        SubTask subtask3 = new SubTask("Подзадача 3", "Описание подзадачи 3", epicId2);
         taskManager.addNewSubtask(subtask3);
 
-        taskManager.getTask(1);
-        taskManager.getHistory();
-        taskManager.getTask(2);
-        taskManager.getHistory();
-        taskManager.getTask(3);
-        taskManager.getHistory();
-        taskManager.getTask(4);
-        taskManager.getHistory();
+        taskManager.getSimpleTask(1);
+        taskManager.getSimpleTask(2);
+        taskManager.getSimpleTask(3);
+        taskManager.getSimpleTask(4);
         taskManager.getEpic(5);
-        taskManager.getHistory();
         taskManager.getEpic(6);
-        taskManager.getHistory();
-        taskManager.getTask(7);
-        taskManager.getHistory();
-        taskManager.getTask(8);
-        taskManager.getHistory();
-        taskManager.getTask(9);
-        taskManager.getHistory();
+        taskManager.getSimpleTask(7);
+        taskManager.getSimpleTask(8);
+        taskManager.getSimpleTask(9);
         taskManager.getSubtask(10);
         taskManager.getHistory();
         taskManager.getSubtask(11);

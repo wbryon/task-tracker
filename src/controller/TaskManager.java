@@ -1,12 +1,10 @@
 package controller;
+import model.*;
+import java.util.*;
 
-import model.Epic;
-import model.Subtask;
-import model.Task;
-
-import java.util.ArrayList;
-import java.util.List;
-
+/**
+ * Интерфейс, объявляющий методы для работы с задачами
+ */
 public interface TaskManager {
 
     /**
@@ -17,7 +15,7 @@ public interface TaskManager {
     /**
      * Метод для получения задачи по идентификатору
      */
-    Task getTask(int id);
+    SimpleTask getSimpleTask(int id);
 
     /**
      * Метод для получения эпика по идентификатору
@@ -27,12 +25,12 @@ public interface TaskManager {
     /**
      * Метод для получения подзадачи по идентификатору
      */
-    Subtask getSubtask(int id);
+    SubTask getSubtask(int id);
 
     /**
      * Метод для создания новой задачи
      */
-    int addNewTask(Task task);
+    int addNewSimpleTask(SimpleTask task);
 
     /**
      * Метод для создания нового эпика
@@ -42,12 +40,12 @@ public interface TaskManager {
     /**
      * Метод для создания новой подзадачи
      */
-    void addNewSubtask(Subtask subtask);
+    void addNewSubtask(SubTask subtask);
 
     /**
      * Метод для удаления задачи по идентификатору
      */
-    void deleteTask(int id);
+    void deleteSimpleTask(int id);
 
     /**
      * Метод для удаления эпика по идентификатору
@@ -62,7 +60,7 @@ public interface TaskManager {
     /**
      * Метод для удаления всех задач
      */
-    void deleteAllTasks();
+    void deleteAllSimpleTasks();
 
     /**
      * Метод для удаления всех эпиков
@@ -77,7 +75,7 @@ public interface TaskManager {
     /**
      * Метод для получения списка всех задач
      */
-    ArrayList<Task> getTasksList();
+    ArrayList<SimpleTask> getSimpleTaskList();
 
     /**
      * Метод для получения списка всех эпиков
@@ -87,7 +85,7 @@ public interface TaskManager {
     /**
      * Метод для получения списка всех подзадач
      */
-    public ArrayList<Subtask> getSubtaskList();
+    public ArrayList<SubTask> getSubtaskList();
 
     /**
      * Метод для получения списка всех подзадач эпика
@@ -97,7 +95,7 @@ public interface TaskManager {
     /**
      * Метод для обновления задачи. Новая версия задачи с верным идентификатором передаётся в виде параметра
      */
-    void updateTask(Task task);
+    void updateSimpleTask(SimpleTask task);
 
     /**
      * Метод для обновления эпика. Новая версия эпика с верным идентификатором передаётся в виде параметра
@@ -107,5 +105,5 @@ public interface TaskManager {
     /**
      * Метод для обновления подзадачи. Новая версия подзадачи с верным идентификатором передаётся в виде параметра
      */
-    void updateSubtask(Subtask subtask);
+    void updateSubtask(SubTask subtask);
 }

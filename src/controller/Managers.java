@@ -1,9 +1,21 @@
 package controller;
 
+/**
+ * Утилитарный класс, отвечающий за создание менеджера задач
+ */
 public class Managers {
 
-    private TaskManager manager = new InMemoryTaskManager();
-    TaskManager getDefault() {
-        return manager;
+    /**
+     * Метод, возвращающий объект-менеджер
+     */
+    public TaskManager getDefault() {
+        return new InMemoryTaskManager();
+    }
+
+    /**
+     * Метод, возвращающий объект InMemoryHistoryManager — историю просмотров
+     */
+    public static HistoryManager getDefaultHistory() {
+        return new InMemoryHistoryManager();
     }
 }

@@ -1,5 +1,4 @@
 package model;
-
 import java.util.*;
 
 /**
@@ -22,7 +21,7 @@ public class Epic extends Task {
     /**
      * Метод для добавления id подзадачи в список id подзадач эпика
      */
-    public void addSubtaskId(Subtask subtask) {
+    public void addSubtaskId(SubTask subtask) {
         subtasksIds.add(subtask.id);
     }
 
