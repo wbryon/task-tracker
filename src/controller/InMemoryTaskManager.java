@@ -2,9 +2,6 @@ package controller;
 import java.util.*;
 import model.*;
 
-/**
- * Класс, управляющий всеми задачами
- */
 public class InMemoryTaskManager implements TaskManager {
     private int generatorId = 0;
 
@@ -14,21 +11,11 @@ public class InMemoryTaskManager implements TaskManager {
 
     private final HistoryManager historyManager = Managers.getDefaultHistory();
 
-    /**
-     * Реализация метода, возвращающего список задач
-     */
     @Override
     public List<Task> getHistory() {
-        for (int i = 0; i < historyManager.getHistory().size(); i++) {
-            System.out.println(i + "-> " + historyManager.getHistory().get(i));
-        }
-        System.out.println("-----выполнен метод 'getHistory'-----");
         return historyManager.getHistory();
     }
 
-    /**
-     * Реализация метода для получения задачи по идентификатору
-     */
     @Override
     public SimpleTask getSimpleTask(int id) {
         if (!taskRepo.containsKey(id)) {
@@ -39,9 +26,6 @@ public class InMemoryTaskManager implements TaskManager {
         return taskRepo.get(id);
     }
 
-    /**
-     * Реализация метода для получения эпика по идентификатору
-     */
     @Override
     public Epic getEpic(int id) {
         if (!epicRepo.containsKey(id)) {
@@ -52,9 +36,6 @@ public class InMemoryTaskManager implements TaskManager {
         return epicRepo.get(id);
     }
 
-    /**
-     * Реализация метода для получения подзадачи по идентификатору
-     */
     @Override
     public SubTask getSubtask(int id) {
         if (!subtaskRepo.containsKey(id)) {
@@ -65,9 +46,6 @@ public class InMemoryTaskManager implements TaskManager {
         return subtaskRepo.get(id);
     }
 
-    /**
-     * Реализация метода для создания новой задачи
-     */
     @Override
     public int addNewSimpleTask(SimpleTask task) {
         task.setId(++generatorId);
@@ -76,9 +54,6 @@ public class InMemoryTaskManager implements TaskManager {
         return task.getId();
     }
 
-    /**
-     * Реализация метода для создания нового эпика
-     */
     @Override
     public int addNewEpic(Epic epic) {
         epic.setId(++generatorId);
@@ -87,9 +62,6 @@ public class InMemoryTaskManager implements TaskManager {
         return epic.getId();
     }
 
-    /**
-     * Реализация метода для создания новой подзадачи
-     */
     @Override
     public void addNewSubtask(SubTask subtask) {
         Epic epic = getEpic(subtask.getEpicId());
@@ -105,9 +77,6 @@ public class InMemoryTaskManager implements TaskManager {
         updateEpicStatus(epic);
     }
 
-    /**
-     * Реализация метода для удаления задачи по идентификатору
-     */
     @Override
     public void deleteSimpleTask(int id) {
         if (!taskRepo.containsKey(id)) {
@@ -117,9 +86,6 @@ public class InMemoryTaskManager implements TaskManager {
         taskRepo.remove(id);
     }
 
-    /**
-     * Реализация метода для удаления эпика по идентификатору
-     */
     @Override
     public void deleteEpic(int id) {
         if (!epicRepo.containsKey(id)) {
@@ -134,9 +100,6 @@ public class InMemoryTaskManager implements TaskManager {
         epicRepo.remove(id);
     }
 
-    /**
-     * Реализация метода для удаления подзадачи по идентификатору
-     */
     @Override
     public void deleteSubtask(int id) {
         if (!subtaskRepo.containsKey(id)) {
@@ -152,9 +115,6 @@ public class InMemoryTaskManager implements TaskManager {
         subtaskRepo.remove(id);
     }
 
-    /**
-     * Реализация метода для удаления всех задач
-     */
     @Override
     public void deleteAllSimpleTasks() {
         if (taskRepo.isEmpty()) {
@@ -164,9 +124,6 @@ public class InMemoryTaskManager implements TaskManager {
         taskRepo.clear();
     }
 
-    /**
-     * Реализация метода для удаления всех эпиков
-     */
     @Override
     public void deleteAllEpics() {
         if (epicRepo.isEmpty()) {
@@ -183,9 +140,6 @@ public class InMemoryTaskManager implements TaskManager {
         System.out.println("Все эпики удалены");
     }
 
-    /**
-     * Реализация метода для удаления всех подзадач
-     */
     @Override
     public void deleteAllSubtasks() {
         if (subtaskRepo.isEmpty()) {
@@ -199,42 +153,26 @@ public class InMemoryTaskManager implements TaskManager {
         System.out.println("Все подзадачи удалены");
     }
 
-    /**
-     * Реализация метода для получения списка всех задач
-     */
     @Override
     public ArrayList<SimpleTask> getSimpleTaskList() {
         return new ArrayList<>(taskRepo.values());
     }
 
-    /**
-     * Реализация метода для получения списка всех эпиков
-     */
     @Override
     public ArrayList<Epic> getEpicList() {
         return new ArrayList<>(epicRepo.values());
     }
 
-    /**
-     * Реализация метода для получения списка всех подзадач
-     */
     @Override
     public ArrayList<SubTask> getSubtaskList() {
         return new ArrayList<>(subtaskRepo.values());
     }
 
-    /**
-     * Реализация метода для получения списка всех подзадач эпика
-     */
     @Override
     public List<Integer> getEpicSubtasks(int epicId) {
         return epicRepo.get(epicId).getSubtasksIds();
     }
 
-    /**
-     * Реализация метода для обновления задачи.
-     * Новая версия задачи с верным идентификатором передаётся в виде параметра
-     */
     @Override
     public void updateSimpleTask(SimpleTask task) {
         if (!taskRepo.containsKey(task.getId())) {
@@ -244,10 +182,6 @@ public class InMemoryTaskManager implements TaskManager {
         taskRepo.put(task.getId(), task);
     }
 
-    /**
-     * Реализация метода для обновления эпика.
-     * Новая версия эпика с верным идентификатором передаётся в виде параметра
-     */
     @Override
     public void updateEpic(Epic epic) {
         if (!epicRepo.containsKey(epic.getId())) {
@@ -257,10 +191,6 @@ public class InMemoryTaskManager implements TaskManager {
         epicRepo.put(epic.getId(), epic);
     }
 
-    /**
-     * Реализация метода для обновления подзадачи.
-     * Новая версия подзадачи с верным идентификатором передаётся в виде параметра
-     */
     @Override
     public void updateSubtask(SubTask subtask) {
         Epic epic = getEpic(subtask.getEpicId());
