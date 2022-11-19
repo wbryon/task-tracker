@@ -13,7 +13,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (task == null) {
             return;
         }
-        if (taskViewHistory.size() > historyCount) {
+        if (taskViewHistory.size() == historyCount) {
             taskViewHistory.remove(0);
         }
         taskViewHistory.add(task);
