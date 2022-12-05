@@ -19,7 +19,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public SimpleTask getSimpleTask(int id) {
         if (!taskRepo.containsKey(id)) {
-            System.out.println("Задача с таким id не найдена");
+            System.out.println("Не найдена задача с id = " + id);
             return null;
         }
         historyManager.add(taskRepo.get(id));
@@ -29,7 +29,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Epic getEpic(int id) {
         if (!epicRepo.containsKey(id)) {
-            System.out.println("Эпик с таким id не найден");
+            System.out.println("Не найден эпик с id = " + id);
             return null;
         }
         historyManager.add(epicRepo.get(id));
@@ -39,7 +39,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public SubTask getSubtask(int id) {
         if (!subtaskRepo.containsKey(id)) {
-            System.out.println("Подзадача с таким id не найдена");
+            System.out.println("Не найдена подзадача с id = " + id);
             return null;
         }
         historyManager.add(subtaskRepo.get(id));
@@ -64,12 +64,11 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addNewSubtask(SubTask subtask) {
-        Epic epic = getEpic(subtask.getEpicId());
+        Epic epic = epicRepo.get(subtask.getEpicId());
         if (epic == null) {
             System.out.println("Эпик не найден");
             return;
         }
-        historyManager.getHistory().remove(historyManager.getHistory().size() - 1);
         subtask.setId(++generatorId);
         subtask.setStatus(Status.NEW);
         epic.addSubtaskId(subtask);
