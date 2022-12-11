@@ -1,22 +1,63 @@
 package controller;
-import model.Task;
+import model.*;
 import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
-
-    Map<Integer, Integer> nodeStorage = new HashMap<>();
+    Map<Integer, Node> nodeStorage = new HashMap<>();
     private final InMemoryHistoryManager.CustomLinkedList list = new CustomLinkedList();
 
     @Override
     public void add(Task task) {
-        int count = 0;
-        if (task == null) {
+        if (task == null)
+            return;
+        Node newNode = new Node(task);
+        if (nodeStorage.containsKey(newNode.task.getId())) {
+            removeNode(newNode);
+        }
+        list.linkLast(task);
+        nodeStorage.put(task.getId(), newNode);
+    }
+
+    @Override
+    public void remove(int id) {
+        Node node = new Node(nodeStorage.get(id).task);
+        if (nodeStorage.get(id).task instanceof Epic) {
+            Epic epic = (Epic)nodeStorage.get(id).task;
+            for (int i = 0; i < epic.getSubtasksIds().size(); i++) {
+                Integer subtaskId = (((Epic) nodeStorage.get(id).task).getSubtasksIds().get(i));
+                removeNode(new Node(nodeStorage.get(subtaskId).task));
+            }
+        }
+        removeNode(node);
+        nodeStorage.remove(id);
+    }
+
+    /**
+     * Метод, принимающий объект Node — узел связного списка и вырезает его
+     */
+    public void removeNode(Node node) {
+        if (node.task.getId() == list.head.task.getId()) {
+            if (node.task.getId() == list.tail.task.getId()) {
+                list.head = null;
+                list.tail = null;
+                return;
+            }
+            list.head = list.head.next;
             return;
         }
-//        if (nodeStorage.containsKey(task.getId()))
-//            list.removeNode(nodeStorage.get(task.getId()));
-        list.linkLast(task);
-        nodeStorage.put(task.getId(), ++count);
+        if (node.task.getId() == list.tail.task.getId()) {
+            list.tail = list.tail.prev;
+            list.tail.next = null;
+            return;
+        }
+        Node curNode = list.head;
+        while (node.task.getId() != curNode.task.getId()) {
+            curNode = curNode.next;
+        }
+        Node prevNode = curNode.prev;
+        Node nextNode = curNode.next;
+        prevNode.next = nextNode;
+        nextNode.prev = prevNode;
     }
 
     @Override
@@ -24,11 +65,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         return new CustomLinkedList().getTasks(list);
     }
 
-    @Override
-    public void remove(int id) {}
-
     public static class CustomLinkedList {
-        private int size = 0;
         private Node head;
         private Node tail;
 
@@ -37,37 +74,22 @@ public class InMemoryHistoryManager implements HistoryManager {
             tail = null;
         }
 
-        private boolean isEmpty() {
-            return head == null;
-        }
-        public void linkFirst(Task task) {
-            Node newNode = new Node(task);
-            if (isEmpty())
-                tail = newNode;
-            else
-                head.prev = newNode;
-            newNode.next = head;
-            head = newNode;
-            size++;
-        }
+        /**
+         * Метод связного списка CustomLinkedList, добавляющий задачу в конец этого списка
+         */
         public void linkLast(Task task) {
             Node newNode = new Node(task);
-            if (isEmpty())
+            if (head == null)
                 head = newNode;
             else
                 tail.next = newNode;
             newNode.prev = tail;
             tail = newNode;
-            size++;
         }
 
-        public void removeNode(Node node) {
-            if (node.equals(head))
-                head.next.prev = null;
-            else if (node.equals(tail))
-                tail.prev.next = null;
-        }
-
+        /**
+         * Метод связного списка CustomLinkedList, собирающий все задачи из него в обычный ArrayList
+         */
         public List<Task> getTasks(CustomLinkedList list) {
             List<Task> taskList = new ArrayList<>();
             Node currentNode = list.head;
@@ -82,18 +104,12 @@ public class InMemoryHistoryManager implements HistoryManager {
             }
             return taskList;
         }
-
-        public void printList() {
-            Node node = head;
-            while (node != null) {
-                System.out.println(node.task);
-                node = node.next;
-            }
-        }
-
     }
 }
 
+/**
+ * Класс Node для узла списка CustomLinkedList
+ */
 class Node {
     public Task task;
     public Node next;

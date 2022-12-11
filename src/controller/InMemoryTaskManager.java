@@ -83,6 +83,7 @@ public class InMemoryTaskManager implements TaskManager {
             return;
         }
         taskRepo.remove(id);
+        historyManager.remove(id);
     }
 
     @Override
@@ -96,6 +97,7 @@ public class InMemoryTaskManager implements TaskManager {
                 subtaskRepo.remove(getSubtask(subtaskId));
             }
         }
+        historyManager.remove(id);
         epicRepo.remove(id);
     }
 
@@ -112,6 +114,7 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
         subtaskRepo.remove(id);
+        historyManager.remove(id);
     }
 
     @Override
