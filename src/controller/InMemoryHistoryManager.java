@@ -11,19 +11,17 @@ public class InMemoryHistoryManager implements HistoryManager {
     public void add(Task task) {
         if (task == null)
             return;
-        Node newNode = new Node(task);
-        if (nodeStorage.containsKey(newNode.task.getId())) {
+        Node newNode = nodeStorage.get(task.getId());
+        if (newNode != null)
             removeNode(newNode);
-        }
         linkLast(task);
-        nodeStorage.put(task.getId(), newNode);
     }
 
     @Override
     public void remove(int id) {
-        Node node = new Node(nodeStorage.get(id).task);
-        if (nodeStorage.get(id).task instanceof Epic) {
-            Epic epic = (Epic)nodeStorage.get(id).task;
+        Node node = nodeStorage.get(id);
+        if (node.task instanceof Epic) {
+            Epic epic = (Epic)node.task;
             for (int i = 0; i < epic.getSubtasksIds().size(); i++) {
                 Integer subtaskId = (((Epic) nodeStorage.get(id).task).getSubtasksIds().get(i));
                 removeNode(new Node(nodeStorage.get(subtaskId).task));
@@ -72,6 +70,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             tail.next = newNode;
         newNode.prev = tail;
         tail = newNode;
+        nodeStorage.put(task.getId(), newNode);
     }
 
     /**
