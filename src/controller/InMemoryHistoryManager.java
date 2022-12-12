@@ -4,7 +4,8 @@ import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
     Map<Integer, Node> nodeStorage = new HashMap<>();
-    private final InMemoryHistoryManager.CustomLinkedList list = new CustomLinkedList();
+    Node head = null;
+    Node tail = null;
 
     @Override
     public void add(Task task) {
@@ -14,7 +15,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (nodeStorage.containsKey(newNode.task.getId())) {
             removeNode(newNode);
         }
-        list.linkLast(task);
+        linkLast(task);
         nodeStorage.put(task.getId(), newNode);
     }
 
@@ -35,22 +36,22 @@ public class InMemoryHistoryManager implements HistoryManager {
     /**
      * Метод, принимающий объект Node — узел связного списка и вырезает его
      */
-    public void removeNode(Node node) {
-        if (node.task.getId() == list.head.task.getId()) {
-            if (node.task.getId() == list.tail.task.getId()) {
-                list.head = null;
-                list.tail = null;
+    private void removeNode(Node node) {
+        if (node.task.getId() == head.task.getId()) {
+            if (node.task.getId() == tail.task.getId()) {
+                head = null;
+                tail = null;
                 return;
             }
-            list.head = list.head.next;
+            head = head.next;
             return;
         }
-        if (node.task.getId() == list.tail.task.getId()) {
-            list.tail = list.tail.prev;
-            list.tail.next = null;
+        if (node.task.getId() == tail.task.getId()) {
+            tail = tail.prev;
+            tail.next = null;
             return;
         }
-        Node curNode = list.head;
+        Node curNode = head;
         while (node.task.getId() != curNode.task.getId()) {
             curNode = curNode.next;
         }
@@ -60,62 +61,49 @@ public class InMemoryHistoryManager implements HistoryManager {
         nextNode.prev = prevNode;
     }
 
+    /**
+     * Метод связного списка, добавляющий задачу в конец этого списка
+     */
+    private void linkLast(Task task) {
+        Node newNode = new Node(task);
+        if (head == null)
+            head = newNode;
+        else
+            tail.next = newNode;
+        newNode.prev = tail;
+        tail = newNode;
+    }
+
+    /**
+     * Метод связного списка CustomLinkedList, собирающий все задачи из него в обычный ArrayList
+     */
+    private List<Task> getTasks() {
+        List<Task> taskList = new ArrayList<>();
+        Node currentNode = head;
+        if (currentNode == null)
+            return null;
+        while (currentNode != null) {
+            taskList.add(currentNode.task);
+            currentNode = currentNode.next;
+        }
+        return taskList;
+    }
+
     @Override
     public List<Task> getHistory() {
-        return new CustomLinkedList().getTasks(list);
+        return getTasks();
     }
 
-    public static class CustomLinkedList {
-        private Node head;
-        private Node tail;
+    /**
+     * Класс Node для узла списка CustomLinkedList
+     */
+    private static class Node {
+        public Task task;
+        public  Node next;
+        public  Node prev;
 
-        public CustomLinkedList() {
-            head = null;
-            tail = null;
+        public Node(Task task) {
+            this.task = task;
         }
-
-        /**
-         * Метод связного списка CustomLinkedList, добавляющий задачу в конец этого списка
-         */
-        public void linkLast(Task task) {
-            Node newNode = new Node(task);
-            if (head == null)
-                head = newNode;
-            else
-                tail.next = newNode;
-            newNode.prev = tail;
-            tail = newNode;
-        }
-
-        /**
-         * Метод связного списка CustomLinkedList, собирающий все задачи из него в обычный ArrayList
-         */
-        public List<Task> getTasks(CustomLinkedList list) {
-            List<Task> taskList = new ArrayList<>();
-            Node currentNode = list.head;
-            if (currentNode == null)
-                return null;
-            while (currentNode != null) {
-                taskList.add(currentNode.task);
-                currentNode = currentNode.next;
-            }
-            for (Task task : taskList) {
-                System.out.println(task);
-            }
-            return taskList;
-        }
-    }
-}
-
-/**
- * Класс Node для узла списка CustomLinkedList
- */
-class Node {
-    public Task task;
-    public Node next;
-    public Node prev;
-
-    public Node(Task task) {
-        this.task = task;
     }
 }

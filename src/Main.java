@@ -1,10 +1,6 @@
-import controller.InMemoryHistoryManager;
 import controller.Managers;
 import controller.TaskManager;
 import model.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Класс, исполняющий программу
@@ -43,7 +39,7 @@ public class Main {
         taskManager.addNewSubtask(subtask3);
 
         Epic epic2 = new Epic("Эпик 2", "Эпик без подзадач");
-        int epicId2 = taskManager.addNewEpic(epic2);
+        taskManager.addNewEpic(epic2);
 
         taskManager.getSimpleTask(3);
         taskManager.getSimpleTask(3);
@@ -60,12 +56,16 @@ public class Main {
         taskManager.getSubtask(5);
         taskManager.getSubtask(6);
         taskManager.getEpic(8);
-        taskManager.getHistory();
+        for (Task task : taskManager.getHistory()) {
+            System.out.println(task);
+        }
         taskManager.getEpic(4);
         taskManager.getSimpleTask(2);
         System.out.println("\nУдалён эпик с тремя подзадачами - подзадачи эпика также должны удалиться\n");
         taskManager.deleteEpic(4);
-        taskManager.getHistory();
+        for (Task task : taskManager.getHistory()) {
+            System.out.println(task);
+        }
         System.out.println("\n----------end-------------");
     }
 }
