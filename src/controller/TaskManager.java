@@ -40,7 +40,7 @@ public interface TaskManager {
     /**
      * Метод для создания новой подзадачи
      */
-    void addNewSubtask(SubTask subtask);
+    int addNewSubtask(SubTask subtask);
 
     /**
      * Метод для удаления задачи по идентификатору
@@ -85,7 +85,7 @@ public interface TaskManager {
     /**
      * Метод для получения списка всех подзадач
      */
-    public ArrayList<SubTask> getSubtaskList();
+    ArrayList<SubTask> getSubtaskList();
 
     /**
      * Метод для получения списка всех подзадач эпика

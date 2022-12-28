@@ -3,13 +3,13 @@ import java.util.*;
 import model.*;
 
 public class InMemoryTaskManager implements TaskManager {
-    private int generatorId = 0;
+    protected int generatorId = 0;
 
     protected final Map<Integer, SimpleTask> taskRepo = new HashMap<>();
     protected final Map<Integer, Epic> epicRepo = new HashMap<>();
     protected final Map<Integer, SubTask> subtaskRepo = new HashMap<>();
 
-    private final HistoryManager historyManager = Managers.getDefaultHistory();
+    protected final HistoryManager historyManager = Managers.getDefaultHistory();
 
     @Override
     public List<Task> getHistory() {
@@ -63,17 +63,18 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void addNewSubtask(SubTask subtask) {
+    public int addNewSubtask(SubTask subtask) {
         Epic epic = epicRepo.get(subtask.getEpicId());
         if (epic == null) {
             System.out.println("Эпик не найден");
-            return;
+            return 0;
         }
         subtask.setId(++generatorId);
         subtask.setStatus(Status.NEW);
         epic.addSubtaskId(subtask);
         subtaskRepo.put(subtask.getId(), subtask);
         updateEpicStatus(epic);
+        return subtask.getId();
     }
 
     @Override
