@@ -26,77 +26,84 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             String HEADER = "id,type,name,status,description,epic\n";
             writer.append(HEADER);
             for (Map.Entry<Integer, SimpleTask> entry : taskRepo.entrySet()) {
-                writer.append(toString(entry.getValue()));
+                writer.append(TaskFormatter.toString(entry.getValue()));
             }
             for (Map.Entry<Integer, Epic> entry : epicRepo.entrySet()) {
-                writer.append(toString(entry.getValue()));
+                writer.append(TaskFormatter.toString(entry.getValue()));
             }
             for (Map.Entry<Integer, SubTask> entry : subtaskRepo.entrySet()) {
-                writer.append(toString(entry.getValue()));
+                writer.append(TaskFormatter.toString(entry.getValue()));
             }
             writer.newLine();
             if (historyManager.getHistory() != null)
-                writer.append(historyToString(historyManager));
+                writer.append(TaskFormatter.historyToString(historyManager));
         } catch (IOException e) {
             throw new ManagerSaveException("Error occurred writing to file " + file.getName());
         }
     }
 
     /**
-     * Метод, создающий задачу из строки
+     * Утилитарный класс для сохранения задач и истории просмотра в строковое представление и
+     * обратное преобразование строк
      */
-    private Task fromString(String value) {
-        Task task;
-        final String[] fields = value.split(",");
+    private static class TaskFormatter {
 
-        if (fields[1].toUpperCase().equals(TaskType.SIMPLETASK.toString()))
-            task = new SimpleTask(fields[1], fields[4]);
-        else if (fields[1].toUpperCase().equals(TaskType.EPIC.toString()))
-            task = new Epic(fields[1], fields[4]);
-        else if (fields[1].toUpperCase().equals(TaskType.SUBTASK.toString()))
-            task = new SubTask(fields[1], fields[4], Integer.parseInt(fields[5]));
-        else
-            return null;
-        task.setId(Integer.parseInt(fields[0]));
-        task.setStatus(Status.valueOf(fields[3].toUpperCase()));
-        task.setTaskName(fields[2]);
-        return task;
-    }
+        /**
+         * Метод, создающий задачу из строки
+         */
+        public static Task fromString(String value) {
+            Task task;
+            final String[] fields = value.split(",");
 
-    /**
-     * Метод, сохраняющий задачу в строку
-     */
-    private String toString(Task task) {
-        if (task instanceof SubTask)
-            return task.getId() + "," + TaskType.SUBTASK + "," + task.getTaskName() + "," +
-                    task.getStatus() + "," + task.getTaskDescription() + "," + ((SubTask) task).getEpicId() + "\n";
-        else if (task instanceof SimpleTask)
-            return task.getId() + "," + TaskType.SIMPLETASK + "," + task.getTaskName() + "," +
-                    task.getStatus() + "," + task.getTaskDescription() + "\n";
-        else
-            return task.getId() + "," + TaskType.EPIC + "," + task.getTaskName() + "," +
-                    task.getStatus() + "," + task.getTaskDescription() + "\n";
-    }
+            if (fields[1].toUpperCase().equals(TaskType.SIMPLETASK.toString()))
+                task = new SimpleTask(fields[1], fields[4]);
+            else if (fields[1].toUpperCase().equals(TaskType.EPIC.toString()))
+                task = new Epic(fields[1], fields[4]);
+            else if (fields[1].toUpperCase().equals(TaskType.SUBTASK.toString()))
+                task = new SubTask(fields[1], fields[4], Integer.parseInt(fields[5]));
+            else
+                return null;
+            task.setId(Integer.parseInt(fields[0]));
+            task.setStatus(Status.valueOf(fields[3].toUpperCase()));
+            task.setTaskName(fields[2]);
+            return task;
+        }
 
-    /**
-     * Статический метод, сохраняющий задачи и историю просмотра задач в файл CSV
-     */
-    public static String historyToString(HistoryManager manager) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < manager.getHistory().size() - 1; i++)
-            stringBuilder.append(manager.getHistory().get(i).getId()).append(",");
-        return stringBuilder.append(manager.getHistory().get(manager.getHistory().size() - 1).getId()).toString();
-    }
+        /**
+         * Метод, сохраняющий задачу в строку
+         */
+        public static String toString(Task task) {
+            if (task instanceof SubTask)
+                return task.getId() + "," + TaskType.SUBTASK + "," + task.getTaskName() + "," +
+                        task.getStatus() + "," + task.getTaskDescription() + "," + ((SubTask) task).getEpicId() + "\n";
+            else if (task instanceof SimpleTask)
+                return task.getId() + "," + TaskType.SIMPLETASK + "," + task.getTaskName() + "," +
+                        task.getStatus() + "," + task.getTaskDescription() + "\n";
+            else
+                return task.getId() + "," + TaskType.EPIC + "," + task.getTaskName() + "," +
+                        task.getStatus() + "," + task.getTaskDescription() + "\n";
+        }
 
-    /**
-     * Статический метод восстанавливающий менеджер истории из CSV
-     */
-    public static List<Integer> historyFromString(String value) {
-        final String[] taskId = value.split(",");
-        List<Integer> history = new ArrayList<>();
-        for (String id: taskId)
-            history.add(Integer.valueOf(id));
-        return history;
+        /**
+         * Статический метод, сохраняющий задачи и историю просмотра задач в файл CSV
+         */
+        public static String historyToString(HistoryManager manager) {
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < manager.getHistory().size() - 1; i++)
+                stringBuilder.append(manager.getHistory().get(i).getId()).append(",");
+            return stringBuilder.append(manager.getHistory().get(manager.getHistory().size() - 1).getId()).toString();
+        }
+
+        /**
+         * Статический метод восстанавливающий менеджер истории из CSV
+         */
+        public static List<Integer> historyFromString(String value) {
+            final String[] taskId = value.split(",");
+            List<Integer> history = new ArrayList<>();
+            for (String id: taskId)
+                history.add(Integer.valueOf(id));
+            return history;
+        }
     }
 
     /**
@@ -108,7 +115,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             String contents = Files.readString(Paths.get(PATH), StandardCharsets.UTF_8);
             String[] arr = contents.split("\n");
             for (int i = 1; i < arr.length - 2; i++) {
-                final Task task = fromString(arr[i]);
+                final Task task = TaskFormatter.fromString(arr[i]);
                 final  int id = task != null ? task.getId() : 0;
                 if (task instanceof SimpleTask)
                     taskRepo.put(id, (SimpleTask) task);
@@ -120,7 +127,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     maxId = id;
             }
             generatorId = maxId;
-            for (Integer id : historyFromString(arr[arr.length - 1])) {
+            for (Integer id : TaskFormatter.historyFromString(arr[arr.length - 1])) {
                 if (taskRepo.containsKey(id))
                     getSimpleTask(id);
                 if (epicRepo.containsKey(id))
