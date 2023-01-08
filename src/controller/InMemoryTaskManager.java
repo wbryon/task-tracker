@@ -5,7 +5,7 @@ import model.*;
 public class InMemoryTaskManager implements TaskManager {
     protected int generatorId = 0;
 
-    protected final Map<Integer, SimpleTask> taskRepo = new HashMap<>();
+    protected final Map<Integer, Task> taskRepo = new HashMap<>();
     protected final Map<Integer, Epic> epicRepo = new HashMap<>();
     protected final Map<Integer, SubTask> subtaskRepo = new HashMap<>();
 
@@ -17,7 +17,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public SimpleTask getSimpleTask(int id) {
+    public Task getTask(int id) {
         if (!taskRepo.containsKey(id)) {
             System.out.println("Не найдена задача с id = " + id);
             return null;
@@ -47,7 +47,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public int addNewSimpleTask(SimpleTask task) {
+    public int addNewTask(Task task) {
         task.setId(++generatorId);
         task.setStatus(Status.NEW);
         taskRepo.put(task.getId(), task);
@@ -78,7 +78,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteSimpleTask(int id) {
+    public void deleteTask(int id) {
         if (!taskRepo.containsKey(id)) {
             System.out.println("Удаление задачи невозможно: id не найден");
             return;
@@ -119,7 +119,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteAllSimpleTasks() {
+    public void deleteAllTasks() {
         if (taskRepo.isEmpty()) {
             System.out.println("Список задач пуст");
             return;
@@ -157,7 +157,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<SimpleTask> getSimpleTaskList() {
+    public ArrayList<Task> getTaskList() {
         return new ArrayList<>(taskRepo.values());
     }
 
@@ -177,7 +177,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateSimpleTask(SimpleTask task) {
+    public void updateTask(Task task) {
         if (!taskRepo.containsKey(task.getId())) {
             System.out.println("Обновление задачи невозможно: id не найден");
             return;

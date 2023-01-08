@@ -25,7 +25,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try (final BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             String HEADER = "id,type,name,status,description,epic\n";
             writer.append(HEADER);
-            for (Map.Entry<Integer, SimpleTask> entry : taskRepo.entrySet()) {
+            for (Map.Entry<Integer, Task> entry : taskRepo.entrySet()) {
                 writer.append(TaskFormatter.toString(entry.getValue()));
             }
             for (Map.Entry<Integer, Epic> entry : epicRepo.entrySet()) {
@@ -55,8 +55,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             Task task;
             final String[] fields = value.split(",");
 
-            if (fields[1].toUpperCase().equals(TaskType.SIMPLETASK.toString()))
-                task = new SimpleTask(fields[1], fields[4]);
+            if (fields[1].toUpperCase().equals(TaskType.TASK.toString()))
+                task = new Task(fields[1], fields[4]);
             else if (fields[1].toUpperCase().equals(TaskType.EPIC.toString()))
                 task = new Epic(fields[1], fields[4]);
             else if (fields[1].toUpperCase().equals(TaskType.SUBTASK.toString()))
@@ -76,8 +76,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             if (task instanceof SubTask)
                 return task.getId() + "," + TaskType.SUBTASK + "," + task.getTaskName() + "," +
                         task.getStatus() + "," + task.getTaskDescription() + "," + ((SubTask) task).getEpicId() + "\n";
-            else if (task instanceof SimpleTask)
-                return task.getId() + "," + TaskType.SIMPLETASK + "," + task.getTaskName() + "," +
+            else if (task instanceof Task)
+                return task.getId() + "," + TaskType.TASK + "," + task.getTaskName() + "," +
                         task.getStatus() + "," + task.getTaskDescription() + "\n";
             else
                 return task.getId() + "," + TaskType.EPIC + "," + task.getTaskName() + "," +
@@ -117,8 +117,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             for (int i = 1; i < arr.length - 2; i++) {
                 final Task task = TaskFormatter.fromString(arr[i]);
                 final  int id = task != null ? task.getId() : 0;
-                if (task instanceof SimpleTask)
-                    taskRepo.put(id, (SimpleTask) task);
+                if (task instanceof Task)
+                    taskRepo.put(id, (Task) task);
                 if (task instanceof Epic)
                     epicRepo.put(id, (Epic) task);
                 if (task instanceof SubTask)
@@ -129,7 +129,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             generatorId = maxId;
             for (Integer id : TaskFormatter.historyFromString(arr[arr.length - 1])) {
                 if (taskRepo.containsKey(id))
-                    getSimpleTask(id);
+                    getTask(id);
                 if (epicRepo.containsKey(id))
                     getEpic(id);
                 if (subtaskRepo.containsKey(id))
@@ -150,8 +150,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public int addNewSimpleTask(SimpleTask task) {
-        super.addNewSimpleTask(task);
+    public int addNewTask(Task task) {
+        super.addNewTask(task);
         save();
         return task.getId();
     }
@@ -171,8 +171,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void deleteSimpleTask(int id) {
-        super.deleteSimpleTask(id);
+    public void deleteTask(int id) {
+        super.deleteTask(id);
         save();
     }
 
@@ -189,8 +189,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void deleteAllSimpleTasks() {
-        super.deleteAllSimpleTasks();
+    public void deleteAllTasks() {
+        super.deleteAllTasks();
         save();
     }
 
@@ -207,8 +207,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updateSimpleTask(SimpleTask task) {
-        super.updateSimpleTask(task);
+    public void updateTask(Task task) {
+        super.updateTask(task);
         save();
     }
 
@@ -231,10 +231,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public SimpleTask getSimpleTask(int id) {
-        final SimpleTask simpleTask = super.getSimpleTask(id);
+    public Task getTask(int id) {
+        final Task task = super.getTask(id);
         save();
-        return simpleTask;
+        return task;
     }
 
     @Override
@@ -252,7 +252,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     private enum TaskType {
-        SIMPLETASK, EPIC, SUBTASK
+        TASK, EPIC, SUBTASK
     }
 
     /**
@@ -261,11 +261,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public static void main(String[] args) {
         File tasks = new File("resources/task.csv");
         FileBackedTasksManager manager = new FileBackedTasksManager(tasks);
-        SimpleTask task1 = new SimpleTask("Задача1", "Описание задачи 1");
-        manager.addNewSimpleTask(task1);
+        Task task1 = new Task("Задача1", "Описание задачи 1");
+        manager.addNewTask(task1);
 
-        SimpleTask task2 = new SimpleTask("Задача2", "Описание задачи 2");
-        manager.addNewSimpleTask(task2);
+        Task task2 = new Task("Задача2", "Описание задачи 2");
+        manager.addNewTask(task2);
 
         Epic epic = new Epic("Эпик1", "Описание эпика 1");
         int epicId1 = manager.addNewEpic(epic);
@@ -276,7 +276,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         SubTask subtask2 = new SubTask("Подзадача2", "Описание подзадачи2 эпика1", epicId1);
         manager.addNewSubtask(subtask2);
 
-        manager.getSimpleTask(1);
+        manager.getTask(1);
         manager.getEpic(3);
         manager.getSubtask(4);
         manager.getSubtask(5);

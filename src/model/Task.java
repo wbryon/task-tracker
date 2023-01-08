@@ -1,18 +1,24 @@
 package model;
 
+import java.time.LocalDateTime;
+
 /**
- * Родительский класс для классов SimpleTask, Epic и SubTask
+ * Родительский класс для классов Epic и SubTask
  */
-public abstract class Task {
+public class Task {
     protected String taskName;
     protected String taskDescription;
     protected int id;
     protected Status status;
+    protected int duration;
+    protected LocalDateTime startTime;
 
     public Task(String taskName, String taskDescription) {
         this.taskName = taskName;
         this.taskDescription = taskDescription;
     }
+
+    protected void getEndTime() {}
 
     /**
      * Геттер названия задачи
@@ -68,5 +74,15 @@ public abstract class Task {
      */
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    /**
+     * Переопределённый метод toString
+     */
+    @Override
+    public String toString() {
+        return "Задача {" + "название: " + taskName +
+                "; описание: " + taskDescription +
+                "; id: " + id + "; статус: " + status + '}';
     }
 }

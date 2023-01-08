@@ -15,7 +15,7 @@ public interface TaskManager {
     /**
      * Метод для получения задачи по идентификатору
      */
-    SimpleTask getSimpleTask(int id);
+    Task getTask(int id);
 
     /**
      * Метод для получения эпика по идентификатору
@@ -30,7 +30,7 @@ public interface TaskManager {
     /**
      * Метод для создания новой задачи
      */
-    int addNewSimpleTask(SimpleTask task);
+    int addNewTask(Task task);
 
     /**
      * Метод для создания нового эпика
@@ -45,7 +45,7 @@ public interface TaskManager {
     /**
      * Метод для удаления задачи по идентификатору
      */
-    void deleteSimpleTask(int id);
+    void deleteTask(int id);
 
     /**
      * Метод для удаления эпика по идентификатору
@@ -60,7 +60,7 @@ public interface TaskManager {
     /**
      * Метод для удаления всех задач
      */
-    void deleteAllSimpleTasks();
+    void deleteAllTasks();
 
     /**
      * Метод для удаления всех эпиков
@@ -75,7 +75,7 @@ public interface TaskManager {
     /**
      * Метод для получения списка всех задач
      */
-    ArrayList<SimpleTask> getSimpleTaskList();
+    ArrayList<Task> getTaskList();
 
     /**
      * Метод для получения списка всех эпиков
@@ -95,7 +95,7 @@ public interface TaskManager {
     /**
      * Метод для обновления задачи. Новая версия задачи с верным идентификатором передаётся в виде параметра
      */
-    void updateSimpleTask(SimpleTask task);
+    void updateTask(Task task);
 
     /**
      * Метод для обновления эпика. Новая версия эпика с верным идентификатором передаётся в виде параметра
