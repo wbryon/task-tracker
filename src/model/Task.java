@@ -1,24 +1,67 @@
 package model;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
- * Родительский класс для классов Epic и SubTask
+ * Родительский класс для классов SimpleTask, Epic и SubTask
  */
-public class Task {
+public abstract class Task {
     protected String taskName;
     protected String taskDescription;
     protected int id;
     protected Status status;
-    protected int duration;
     protected LocalDateTime startTime;
+    protected Duration duration;
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm | dd.MM.yyyy");
 
     public Task(String taskName, String taskDescription) {
         this.taskName = taskName;
         this.taskDescription = taskDescription;
     }
 
-    protected void getEndTime() {}
+    public Task(String taskName, String taskDescription, String start, int duration) {
+        this.taskName = taskName;
+        this.taskDescription = taskDescription;
+        this.startTime = getStartTimeOfTaskFromString(start);
+        this.duration = getDurationOfTaskFromString(duration);
+        setStatus(Status.NEW);
+        getEndTime();
+    }
+
+    public LocalDateTime getStartTimeOfTaskFromString(String start) {
+        return LocalDateTime.parse(start, formatter);
+    }
+
+    public Duration getDurationOfTaskFromString(int minutes) {
+        Duration duration;
+        if (minutes >= 60)
+            duration = Duration.ofHours(minutes / 60).plusMinutes(minutes % 60);
+        else
+            duration = Duration.ofMinutes(minutes);
+        return duration;
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime.plus(duration);
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
 
     /**
      * Геттер названия задачи
@@ -74,15 +117,5 @@ public class Task {
      */
     public void setStatus(Status status) {
         this.status = status;
-    }
-
-    /**
-     * Переопределённый метод toString
-     */
-    @Override
-    public String toString() {
-        return "Задача {" + "название: " + taskName +
-                "; описание: " + taskDescription +
-                "; id: " + id + "; статус: " + status + '}';
     }
 }

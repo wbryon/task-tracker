@@ -8,7 +8,7 @@ public class Managers {
     /**
      * Метод, возвращающий объект-менеджер
      */
-    public TaskManager getDefault() {
+    public static TaskManager getDefault() {
         return new InMemoryTaskManager();
     }
 

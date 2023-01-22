@@ -18,9 +18,14 @@ class EpicTest {
         Epic epic2 = new Epic("epic 2", "description epic 2");
         manager.addNewEpic(epic1);
         manager.addNewEpic(epic2);
-        SubTask subTask1 = new SubTask("subTask 1", "description subTask 1", epic1.getId());
-        SubTask subTask2 = new SubTask("subTask 2", "description subTask 2", epic1.getId());
-        SubTask subTask3 = new SubTask("subTask 3", "description subTask 3", epic2.getId());
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1 эпика 1",
+                "22:15 | 08.01.2023", 20, epic1.getId());
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2 эпика 1",
+                "10:00 | 10.01.2023", 15, epic1.getId());
+        SubTask subTask3 = new SubTask("Подзадача 1", "Описание подзадачи 1 эпика 2",
+                "12:45 | 12.01.2023", 45, epic2.getId());
+
+
         manager.addNewSubtask(subTask1);
         manager.addNewSubtask(subTask2);
         manager.addNewSubtask(subTask3);
@@ -34,7 +39,7 @@ class EpicTest {
     }
 
     @Test
-    void shouldGetEpicStatusWhenNoSubtasks() {
+    void shouldGetEpicStatusWhenNoSubTasks() {
         Epic epic = new Epic("epic 1", "description epic 1");
         manager.addNewEpic(epic);
         assertTrue(epic.subtasksIds.isEmpty());
@@ -46,10 +51,15 @@ class EpicTest {
         Epic epic2 = new Epic("epic 2", "description epic 2");
         manager.addNewEpic(epic1);
         manager.addNewEpic(epic2);
-        SubTask subTask1 = new SubTask("subTask 1", "description subTask 1", epic1.getId());
-        SubTask subTask2 = new SubTask("subTask 2", "description subTask 2", epic2.getId());
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1 эпика 1",
+                "22:15 | 08.01.2023", 20, epic1.getId());
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2 эпика 1",
+                "10:00 | 10.01.2023", 15, epic1.getId());
+        SubTask subTask3 = new SubTask("Подзадача 1", "Описание подзадачи 1 эпика 2",
+                "12:45 | 12.01.2023", 45, epic2.getId());
         manager.addNewSubtask(subTask1);
         manager.addNewSubtask(subTask2);
+        manager.addNewSubtask(subTask3);
         assertEquals(Status.NEW, epic1.getStatus(), "Подзадачи в работе или завершены");
     }
 
@@ -57,39 +67,47 @@ class EpicTest {
     void shouldGetEpicStatusWhenAllSubTasksIsInProgress() {
         Epic epic = new Epic("epic 1", "description epic 1");
         manager.addNewEpic(epic);
-        SubTask subTask1 = new SubTask("subTask 1", "description subTask 1", epic.getId());
-        SubTask subTask2 = new SubTask("subTask 2", "description subTask 2", epic.getId());
-        epic.setStatus(Status.IN_PROGRESS);
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1 эпика 1",
+                "22:15 | 08.01.2023", 20, epic.getId());
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2 эпика 1",
+                "10:00 | 10.01.2023", 15, epic.getId());
+        manager.addNewSubtask(subTask1);
+        manager.addNewSubtask(subTask2);
+        subTask1.setStatus(Status.DONE);
+        subTask2.setStatus(Status.IN_PROGRESS);
+        manager.updateEpic(epic);
         assertEquals(Status.IN_PROGRESS, epic.getStatus(), "Подзадачи только созданы или уже завершены");
     }
 
     @Test
     void shouldGetEpicStatusWhenAllSubTasksIsDone() {
-        Epic epic1 = new Epic("epic 1", "description epic 1");
-        manager.addNewEpic(epic1);
-        SubTask subTask1 = new SubTask("subTask 1", "description subTask 1", epic1.getId());
-        SubTask subTask2 = new SubTask("subTask 2", "description subTask 2", epic1.getId());
-        epic1.setStatus(Status.DONE);
-        assertEquals(Status.DONE, epic1.getStatus(), "Подзадачи только созданы или ещё в работе");
+        Epic epic = new Epic("epic 1", "description epic 1");
+        manager.addNewEpic(epic);
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1 эпика 1",
+                "22:15 | 08.01.2023", 20, epic.getId());
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2 эпика 1",
+                "10:00 | 10.01.2023", 15, epic.getId());
+        manager.addNewSubtask(subTask1);
+        manager.addNewSubtask(subTask2);
+        subTask1.setStatus(Status.DONE);
+        subTask2.setStatus(Status.DONE);
+        manager.updateEpic(epic);
+        assertEquals(Status.DONE, epic.getStatus(), "Подзадачи только созданы или ещё в работе");
     }
 
     @Test
     void shouldGetEpicStatusWhenAllSubTasksIsNewAndDone() {
-        Epic epic1 = new Epic("epic 1", "description epic 1");
-        Epic epic2 = new Epic("epic 2", "description epic 2");
-        manager.addNewEpic(epic1);
-        manager.addNewEpic(epic2);
-        SubTask subTask1 = new SubTask("subTask 1", "description subTask 1", epic1.getId());
-        SubTask subTask2 = new SubTask("subTask 2", "description subTask 2", epic1.getId());
-        SubTask subTask3 = new SubTask("subTask 3", "description subTask 3", epic2.getId());
+        Epic epic = new Epic("epic 1", "description epic 1");
+        manager.addNewEpic(epic);
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1 эпика 1",
+                "22:15 | 08.01.2023", 20, epic.getId());
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2 эпика 1",
+                "10:00 | 10.01.2023", 15, epic.getId());
         manager.addNewSubtask(subTask1);
         manager.addNewSubtask(subTask2);
-        manager.addNewSubtask(subTask3);
-        subTask2.setStatus(Status.DONE);
-        Set<Status> statuses = new HashSet<>();
-        for (SubTask subTask : manager.getSubtaskList()) {
-            statuses.add(subTask.getStatus());
-        }
-        assertFalse(statuses.contains(Status.IN_PROGRESS), "Статус подзадач не совпадает");
+        subTask1.setStatus(Status.DONE);
+        subTask2.setStatus(Status.NEW);
+        manager.updateEpic(epic);
+        assertEquals(Status.IN_PROGRESS, epic.getStatus(), "Статус эпика подсчитан неверно");
     }
 }

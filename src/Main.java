@@ -17,14 +17,14 @@ public class Main {
 
         System.out.println("---- Создание задач ----\n");
 
-        Task task1 = new Task("Задача 1", "Задача 1");
-        taskManager.addNewTask(task1);
+        SimpleTask task1 = new SimpleTask("Задача 1", "Задача 1");
+        taskManager.addNewSimpletask(task1);
 
-        Task task2 = new Task("Задача 2", "Задача 2");
-        taskManager.addNewTask(task2);
+        SimpleTask task2 = new SimpleTask("Задача 2", "Задача 2");
+        taskManager.addNewSimpletask(task2);
 
-        Task task3 = new Task("Задача 3", "Задача 3");
-        taskManager.addNewTask(task3);
+        SimpleTask task3 = new SimpleTask("Задача 3", "Задача 3");
+        taskManager.addNewSimpletask(task3);
 
         Epic epic1 = new Epic("Эпик 1", "Эпик 1");
         int epicId1 = taskManager.addNewEpic(epic1);
@@ -41,26 +41,26 @@ public class Main {
         Epic epic2 = new Epic("Эпик 2", "Эпик без подзадач");
         taskManager.addNewEpic(epic2);
 
-        taskManager.getTask(3);
-        taskManager.getTask(3);
-        taskManager.getEpic(8);
-        taskManager.getTask(1);
-        taskManager.getTask(2);
-        taskManager.getTask(2);
-        taskManager.getEpic(8);
-        taskManager.getTask(1);
-        taskManager.getTask(3);
-        taskManager.getEpic(4);
-        taskManager.getSubtask(7);
-        taskManager.getSubtask(6);
-        taskManager.getSubtask(5);
-        taskManager.getSubtask(6);
-        taskManager.getEpic(8);
+        taskManager.getSimpleTaskWithoutHistory(3);
+        taskManager.getSimpleTaskWithoutHistory(3);
+        taskManager.getEpicWithoutHistory(8);
+        taskManager.getSimpleTaskWithoutHistory(1);
+        taskManager.getSimpleTaskWithoutHistory(2);
+        taskManager.getSimpleTaskWithoutHistory(2);
+        taskManager.getEpicWithoutHistory(8);
+        taskManager.getSimpleTaskWithoutHistory(1);
+        taskManager.getSimpleTaskWithoutHistory(3);
+        taskManager.getEpicWithoutHistory(4);
+        taskManager.getSubtaskWithoutHistory(7);
+        taskManager.getSubtaskWithoutHistory(6);
+        taskManager.getSubtaskWithoutHistory(5);
+        taskManager.getSubtaskWithoutHistory(6);
+        taskManager.getEpicWithoutHistory(8);
         for (Task task : taskManager.getHistory()) {
             System.out.println(task);
         }
-        taskManager.getEpic(4);
-        taskManager.getTask(2);
+        taskManager.getEpicWithoutHistory(4);
+        taskManager.getSimpleTaskWithoutHistory(2);
         System.out.println("\nУдалён эпик с тремя подзадачами - подзадачи эпика также должны удалиться\n");
         taskManager.deleteEpic(4);
         for (Task task : taskManager.getHistory()) {

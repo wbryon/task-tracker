@@ -13,9 +13,19 @@ public interface TaskManager {
     List<Task> getHistory();
 
     /**
+     * Метод для получения задачи и истории просмотра по идентификатору
+     */
+    SimpleTask getSimpleTaskWithoutHistory(int id);
+
+    /**
      * Метод для получения задачи по идентификатору
      */
-    Task getTask(int id);
+    SimpleTask getSimpleTask(int id);
+
+    /**
+     * Метод для получения эпика по идентификатору
+     */
+    Epic getEpicWithoutHistory(int id);
 
     /**
      * Метод для получения эпика по идентификатору
@@ -25,12 +35,17 @@ public interface TaskManager {
     /**
      * Метод для получения подзадачи по идентификатору
      */
-    SubTask getSubtask(int id);
+    SubTask getSubtaskWithoutHistory(int id);
+
+    /**
+     * Метод для получения подзадачи и истории просмотра по идентификатору
+     */
+    SubTask getSubTask(int id);
 
     /**
      * Метод для создания новой задачи
      */
-    int addNewTask(Task task);
+    int addNewSimpletask(SimpleTask task);
 
     /**
      * Метод для создания нового эпика
@@ -45,7 +60,7 @@ public interface TaskManager {
     /**
      * Метод для удаления задачи по идентификатору
      */
-    void deleteTask(int id);
+    void deleteSimpletask(int id);
 
     /**
      * Метод для удаления эпика по идентификатору
@@ -60,7 +75,7 @@ public interface TaskManager {
     /**
      * Метод для удаления всех задач
      */
-    void deleteAllTasks();
+    void deleteAllSimpletasks();
 
     /**
      * Метод для удаления всех эпиков
@@ -75,7 +90,7 @@ public interface TaskManager {
     /**
      * Метод для получения списка всех задач
      */
-    ArrayList<Task> getTaskList();
+    ArrayList<SimpleTask> getSimpletaskList();
 
     /**
      * Метод для получения списка всех эпиков
@@ -95,15 +110,17 @@ public interface TaskManager {
     /**
      * Метод для обновления задачи. Новая версия задачи с верным идентификатором передаётся в виде параметра
      */
-    void updateTask(Task task);
+    SimpleTask updateSimpletask(SimpleTask task);
 
     /**
      * Метод для обновления эпика. Новая версия эпика с верным идентификатором передаётся в виде параметра
      */
-    void updateEpic(Epic epic);
+    Epic updateEpic(Epic epic);
 
     /**
      * Метод для обновления подзадачи. Новая версия подзадачи с верным идентификатором передаётся в виде параметра
      */
-    void updateSubtask(SubTask subtask);
+    SubTask updateSubtask(SubTask subtask);
+
+    List<Task> getPrioritizedTasks();
 }

@@ -12,6 +12,11 @@ public class SubTask extends Task {
         this.epicId = epicId;
     }
 
+    public SubTask(String taskName, String taskDescription, String start, int duration, int epicId) {
+        super(taskName, taskDescription, start, duration);
+        this.epicId = epicId;
+    }
+
     /**
      * Геттер id эпика
      */
@@ -31,8 +36,14 @@ public class SubTask extends Task {
      */
     @Override
     public String toString() {
-        return "Подзадача {" + "название: " + taskName +
-                "; описание: " + taskDescription +
-                "; id: " + id + "; статус: " + status + '}';
+        return id + "," +
+                "SUBTASK" + "," +
+                taskName + "," +
+                status + "," +
+                taskDescription + "," +
+                startTime + "," +
+                duration + "," +
+                getEndTime() + "," +
+                epicId;
     }
 }

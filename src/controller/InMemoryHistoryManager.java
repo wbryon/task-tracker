@@ -19,14 +19,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) {
-        Node node = nodeStorage.get(id);
-        if (node.task instanceof Epic) {
-            Epic epic = (Epic)node.task;
-            for (int i = 0; i < epic.getSubtasksIds().size(); i++) {
-                Integer subtaskId = (((Epic) nodeStorage.get(id).task).getSubtasksIds().get(i));
-                removeNode(new Node(nodeStorage.get(subtaskId).task));
-            }
-        }
+        final Node node = nodeStorage.get(id);
         removeNode(node);
         nodeStorage.remove(id);
     }
@@ -35,28 +28,25 @@ public class InMemoryHistoryManager implements HistoryManager {
      * Метод, принимающий объект Node — узел связного списка и вырезает его
      */
     private void removeNode(Node node) {
-        if (node.task.getId() == head.task.getId()) {
-            if (node.task.getId() == tail.task.getId()) {
+        if (node != null) {
+            final Node nextNode = node.next;
+            final Node prevNode = node.prev;
+
+            if (nextNode != null && prevNode != null) {
+                prevNode.next = node.next;
+                nextNode.prev = node.prev;
+            } else if (nextNode == null && prevNode != null) {
+                tail = node.prev;
+                node.prev.next = null;
+            } else if (nextNode != null) {
+                head = node.next;
+                node.next.prev = null;
+            } else {
                 head = null;
                 tail = null;
-                return;
             }
-            head = head.next;
-            return;
+            nodeStorage.remove(node.task.getId());
         }
-        if (node.task.getId() == tail.task.getId()) {
-            tail = tail.prev;
-            tail.next = null;
-            return;
-        }
-        Node curNode = head;
-        while (node.task.getId() != curNode.task.getId()) {
-            curNode = curNode.next;
-        }
-        Node prevNode = curNode.prev;
-        Node nextNode = curNode.next;
-        prevNode.next = nextNode;
-        nextNode.prev = prevNode;
     }
 
     /**
@@ -79,8 +69,6 @@ public class InMemoryHistoryManager implements HistoryManager {
     private List<Task> getTasks() {
         List<Task> taskList = new ArrayList<>();
         Node currentNode = head;
-        if (currentNode == null)
-            return null;
         while (currentNode != null) {
             taskList.add(currentNode.task);
             currentNode = currentNode.next;
