@@ -17,29 +17,33 @@ public class Main {
 
         System.out.println("---- Создание задач ----\n");
 
-        SimpleTask task1 = new SimpleTask("Задача 1", "Задача 1");
-        taskManager.addNewSimpletask(task1);
+        SimpleTask simpleTask1 = new SimpleTask("Задача 1", "Описание задачи 1",
+                "09:00 | 09.01.2023", 60);
+        taskManager.addNewSimpletask(simpleTask1);
 
-        SimpleTask task2 = new SimpleTask("Задача 2", "Задача 2");
-        taskManager.addNewSimpletask(task2);
+        SimpleTask simpleTask2 = new SimpleTask("Задача 2", "Описание задачи 2",
+                "22:00 | 11.01.2023", 30);
+        taskManager.addNewSimpletask(simpleTask2);
 
-        SimpleTask task3 = new SimpleTask("Задача 3", "Задача 3");
-        taskManager.addNewSimpletask(task3);
+        SimpleTask simpleTask3 = new SimpleTask("Задача 3", "Описание задачи 3",
+                "12:00 | 16.01.2023", 57);
+        taskManager.addNewSimpletask(simpleTask3);
 
         Epic epic1 = new Epic("Эпик 1", "Эпик 1");
         int epicId1 = taskManager.addNewEpic(epic1);
 
-        SubTask subtask1 = new SubTask("Подзадача 1", "Подзадача 1 эпика 1", epicId1);
-        taskManager.addNewSubtask(subtask1);
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1 эпика1",
+                "22:15 | 08.01.2023", 20, epic1.getId());
 
-        SubTask subtask2 = new SubTask("Подзадача 2", "Подзадача 2 эпика 1", epicId1);
-        taskManager.addNewSubtask(subtask2);
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2 эпика1",
+                "10:00 | 10.01.2023", 15, epic1.getId());
 
-        SubTask subtask3 = new SubTask("Подзадача 3", "Подзадача 3 эпика 1", epicId1);
-        taskManager.addNewSubtask(subtask3);
+        SubTask subTask3 = new SubTask("Подзадача 1", "Описание подзадачи 1 эпика1",
+                "11:15 | 18.01.2023", 40, epic1.getId());
 
-        Epic epic2 = new Epic("Эпик 2", "Эпик без подзадач");
-        taskManager.addNewEpic(epic2);
+        taskManager.addNewSubtask(subTask1);
+        taskManager.addNewSubtask(subTask2);
+        taskManager.addNewSubtask(subTask3);
 
         taskManager.getSimpleTaskWithoutHistory(3);
         taskManager.getSimpleTaskWithoutHistory(3);
