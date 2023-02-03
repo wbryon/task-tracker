@@ -31,7 +31,13 @@ public class KVTaskClient {
                 .header("Accept", "text/html")
                 .build();
         handler = HttpResponse.BodyHandlers.ofString();
-        response = client.send(request, handler);
+        try {
+            response = client.send(request, handler);
+            apiToken = response.body();
+        } catch (InterruptedException | IOException e) {
+            System.out.println("Во время выполнения запроса возникла ошибка.\n" +
+                    "Проверьте, пожалуйста, адрес и повторите попытку.");
+        }
     }
 
     /**

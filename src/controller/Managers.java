@@ -1,5 +1,7 @@
 package controller;
 
+import server.KVServer;
+
 /**
  * Утилитарный класс, отвечающий за создание менеджера задач
  */
@@ -9,7 +11,7 @@ public class Managers {
      * Метод, возвращающий объект-менеджер
      */
     public static TaskManager getDefault() {
-        return new InMemoryTaskManager();
+        return new HttpTaskManager("http://localhost:" + KVServer.PORT + "/");
     }
 
     /**

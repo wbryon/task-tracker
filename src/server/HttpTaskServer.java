@@ -8,7 +8,9 @@ import controller.Managers;
 import controller.TaskManager;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -36,13 +38,13 @@ public class HttpTaskServer {
         gson = gsonBuilder.create();
     }
 
-    private void handle(HttpExchange exchange) {
+    public void handle(HttpExchange exchange) throws IOException {
         String path = exchange.getRequestURI().getPath();
         String method = exchange.getRequestMethod();
     }
 
     public void start() {
-        System.out.println("Запускаем сервер на порту " + PORT);
+        System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
         httpServer.start();
     }
 
@@ -85,4 +87,6 @@ public class HttpTaskServer {
         HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
     }
+
+    enum Endpoint {GET_POSTS, GET_COMMENTS, POST_COMMENT, UNKNOWN}
 }

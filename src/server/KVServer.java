@@ -11,9 +11,6 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
-/**
- * Постман: https://www.getpostman.com/collections/a83b61d9e1c81c10575c
- */
 public class KVServer {
     public static final int PORT = 8888;
     private final String apiToken;
@@ -31,10 +28,7 @@ public class KVServer {
     }
 
     /**
-     * Метод, отвечающий за получение данных.
-     * Доделайте логику работы сервера по комментариям (комментарии затем можно убрать).
-     * После этого запустите сервер и проверьте, что получение значения по ключу работает.
-     * Для начальной отладки можно делать запросы без авторизации, используя код DEBUG
+     * Метод, возвращающий сохранённое значение по ключу.
      */
     private void load(HttpExchange httpExchange) throws IOException {
         if (!hasAuth(httpExchange)) {
@@ -55,6 +49,9 @@ public class KVServer {
         httpExchange.close();
     }
 
+    /**
+     * Метод, сохраняющий содержимое тела запроса, привязанное к ключу
+     */
     private void save(HttpExchange httpExchange) throws IOException {
         try {
             System.out.println("\n/save");
@@ -88,6 +85,10 @@ public class KVServer {
         }
     }
 
+    /**
+     * Метод, регистрирующий клиента и выдающий уникальный токен доступа (аутентификации),
+     * чтобы хранилище могло работать сразу с несколькими клиентами
+     */
     private void register(HttpExchange httpExchange) throws IOException {
         try {
             System.out.println("\n/register");
@@ -113,19 +114,19 @@ public class KVServer {
         return "" + System.currentTimeMillis();
     }
 
-    protected boolean hasAuth(HttpExchange h) {
-        String rawQuery = h.getRequestURI().getRawQuery();
+    protected boolean hasAuth(HttpExchange httpExchange) {
+        String rawQuery = httpExchange.getRequestURI().getRawQuery();
         return rawQuery != null && (rawQuery.contains("API_TOKEN=" + apiToken) || rawQuery.contains("API_TOKEN=DEBUG"));
     }
 
-    protected String readText(HttpExchange h) throws IOException {
-        return new String(h.getRequestBody().readAllBytes(), UTF_8);
+    protected String readText(HttpExchange httpExchange) throws IOException {
+        return new String(httpExchange.getRequestBody().readAllBytes(), UTF_8);
     }
 
-    protected void sendText(HttpExchange h, String text) throws IOException {
-        byte[] resp = text.getBytes(UTF_8);
-        h.getResponseHeaders().add("Content-Type", "application/json");
-        h.sendResponseHeaders(200, resp.length);
-        h.getResponseBody().write(resp);
+    protected void sendText(HttpExchange httpExchange, String text) throws IOException {
+        byte[] response = text.getBytes(UTF_8);
+        httpExchange.getResponseHeaders().add("Content-Type", "application/json");
+        httpExchange.sendResponseHeaders(200, response.length);
+        httpExchange.getResponseBody().write(response);
     }
 }
