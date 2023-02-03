@@ -1,40 +1,67 @@
 package server;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
-import controller.FileBackedTasksManager;
 import controller.Managers;
 import controller.TaskManager;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.LocalDate;
+
+import model.*;
+
+import static jdk.internal.util.xml.XMLStreamWriter.DEFAULT_CHARSET;
 
 public class HttpTaskServer {
     public static final int PORT = 8888;
     private final HttpServer httpServer;
     private final Gson gson;
-    private final TaskManager taskManager;
-
-    TaskManager manager = Managers.getDefault();
+    public final TaskManager taskManager;
 
     public HttpTaskServer() throws IOException {
-        this(Managers.getDefault());
-    }
-
-    public HttpTaskServer(TaskManager taskManager) throws IOException {
-        this.taskManager = taskManager;
+        taskManager = Managers.getDefault();
         httpServer = HttpServer.create();
         httpServer.bind(new InetSocketAddress("localhost", PORT), 0);
-        httpServer.createContext("", this::handler);
-        gson = null;
+        httpServer.createContext("", this::handle);
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateAdapter());
+        gson = gsonBuilder.create();
     }
-    private void handler(HttpExchange exchange) {}
+
+    private void handle(HttpExchange exchange) {
+        String path = exchange.getRequestURI().getPath();
+        String method = exchange.getRequestMethod();
+    }
+
+    public void start() {
+        System.out.println("Запускаем сервер на порту " + PORT);
+        httpServer.start();
+    }
+
+    public void stop() {
+        httpServer.stop(0);
+    }
+
+    private void writeResponse(HttpExchange exchange, String responseString, int responseCode) throws IOException {
+        if(responseString.isBlank()) {
+            exchange.sendResponseHeaders(responseCode, 0);
+        } else {
+            byte[] bytes = responseString.getBytes(DEFAULT_CHARSET);
+            exchange.sendResponseHeaders(responseCode, bytes.length);
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(bytes);
+            }
+        }
+        exchange.close();
+    }
 
     public void getAllTasks() throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
