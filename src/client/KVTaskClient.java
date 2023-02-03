@@ -25,25 +25,39 @@ public class KVTaskClient {
     public KVTaskClient(URI uri) throws IOException, InterruptedException {
         client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .GET()    // указываем HTTP-метод запроса
-                .uri(uri) // указываем адрес ресурса
+                .GET()
+                .uri(uri)
                 .version(HttpClient.Version.HTTP_1_1)
                 .header("Accept", "text/html")
-                .build(); // заканчиваем настройку и создаём ("строим") HTTP-запрос
-        handler = HttpResponse.BodyHandlers.ofString(); // получаем стандартный обработчик тела ответа с конвертацией содержимого в строку
+                .build();
+        handler = HttpResponse.BodyHandlers.ofString();
         response = client.send(request, handler);
     }
 
     /**
-     * Метод должен сохранять состояние менеджера задач через запрос 'POST /save/<ключ>?API_TOKEN='
+     * Метод, сохраняющий состояние менеджера задач через запрос 'POST /save/<ключ>?API_TOKEN='
      */
-    void put(String key, String json) {}
-
-    /**
-     * Метод должен возвращать состояние менеджера задач через запрос 'GET /load/<ключ>?API_TOKEN='
-     */
-    String load(String key) {
-        return null;
+    public void put(String key, String json) throws IOException, InterruptedException {
+        URI uri = URI.create("http://localhost:8888/save/" + key + "?" + "API_TOKEN=" + apiToken);
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(json))
+                .uri(uri)
+                .version(HttpClient.Version.HTTP_1_1)
+                .build();
+        client.send(request, handler);
     }
 
+    /**
+     * Метод, возвращающий состояние менеджера задач через запрос 'GET /load/<ключ>?API_TOKEN='
+     */
+    public String load(String key) throws IOException, InterruptedException {
+        URI uri = URI.create("http://localhost:8888/load/" + key + "?" + "API_TOKEN=" + apiToken);
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(uri)
+                .version(HttpClient.Version.HTTP_1_1)
+                .build();
+        response = client.send(request, handler);
+        return response.body();
+    }
 }
