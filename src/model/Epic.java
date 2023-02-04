@@ -24,8 +24,8 @@ public class Epic extends Task {
     /**
      * Метод для добавления id подзадачи в список id подзадач эпика
      */
-    public void addSubtaskId(SubTask subtask) {
-        subtasksIds.add(subtask.id);
+    public void addSubtaskId(SubTask subTask) {
+        subtasksIds.add(subTask.id);
     }
 
     /**

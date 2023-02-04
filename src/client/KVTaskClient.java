@@ -44,7 +44,7 @@ public class KVTaskClient {
      * Метод, сохраняющий состояние менеджера задач через запрос 'POST /save/<ключ>?API_TOKEN='
      */
     public void put(String key, String json) throws IOException, InterruptedException {
-        URI uri = URI.create("http://localhost:8888/save/" + key + "?" + "API_TOKEN=" + apiToken);
+        URI uri = URI.create("http://localhost:8888/tasks/save/" + key + "?" + "API_TOKEN=" + apiToken);
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .uri(uri)
@@ -57,7 +57,7 @@ public class KVTaskClient {
      * Метод, возвращающий состояние менеджера задач через запрос 'GET /load/<ключ>?API_TOKEN='
      */
     public String load(String key) throws IOException, InterruptedException {
-        URI uri = URI.create("http://localhost:8888/load/" + key + "?" + "API_TOKEN=" + apiToken);
+        URI uri = URI.create("http://localhost:8888/tasks/load/" + key + "?" + "API_TOKEN=" + apiToken);
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
                 .uri(uri)

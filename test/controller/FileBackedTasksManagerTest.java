@@ -43,7 +43,7 @@ class FileBackedTasksManagerTest extends InMemoryTaskManagerTest {
 
     @Test
     void shouldSaveSimpleTask() {
-        loadedTaskManager.addNewSimpletask(simpleTask1);
+        loadedTaskManager.createSimpleTask(simpleTask1);
         loadedTaskManager.getSimpleTaskWithoutHistory(1);
         FileBackedTasksManager.loadFromFile(file);
         Task savedTask = loadedTaskManager.getSimpleTaskWithoutHistory(simpleTask1.getId());
@@ -52,7 +52,7 @@ class FileBackedTasksManagerTest extends InMemoryTaskManagerTest {
 
     @Test
     void shouldSaveEpic() {
-        loadedTaskManager.addNewEpic(epic1);
+        loadedTaskManager.createEpic(epic1);
         loadedTaskManager.getEpicWithoutHistory(1);
         FileBackedTasksManager.loadFromFile(file);
         Epic savedEpic = loadedTaskManager.getEpicWithoutHistory(epic1.getId());
@@ -61,17 +61,17 @@ class FileBackedTasksManagerTest extends InMemoryTaskManagerTest {
 
     @Test
     void shouldSaveSubTask() {
-        loadedTaskManager.addNewEpic(epic1);
-        loadedTaskManager.addNewSubtask(subTask);
-        loadedTaskManager.getSubtaskWithoutHistory(2);
+        loadedTaskManager.createEpic(epic1);
+        loadedTaskManager.createSubTask(subTask);
+        loadedTaskManager.getSubTaskWithoutHistory(2);
         FileBackedTasksManager.loadFromFile(file);
-        SubTask savedSubTask = loadedTaskManager.getSubtaskWithoutHistory(subTask.getId());
+        SubTask savedSubTask = loadedTaskManager.getSubTaskWithoutHistory(subTask.getId());
         assertEquals(expectedSubTask, savedSubTask.toString(), "Подзадача сохранена неверно");
     }
 
     @Test
     void shouldLoadFromFileNewSimpleTask() {
-        loadedTaskManager.addNewSimpletask(simpleTask1);
+        loadedTaskManager.createSimpleTask(simpleTask1);
         loadedTaskManager.getSimpleTaskWithoutHistory(1);
 
         FileBackedTasksManager.loadFromFile(file);
@@ -82,20 +82,20 @@ class FileBackedTasksManagerTest extends InMemoryTaskManagerTest {
 
     @Test
     void shouldLoadFromFileSimpleTaskList() {
-        loadedTaskManager.addNewSimpletask(simpleTask1);
+        loadedTaskManager.createSimpleTask(simpleTask1);
         loadedTaskManager.getSimpleTaskWithoutHistory(1);
-        taskManager.addNewSimpletask(simpleTask1);
+        taskManager.createSimpleTask(simpleTask1);
         FileBackedTasksManager.loadFromFile(file);
 
-        assertEquals(taskManager.getSimpletaskList(), loadedTaskManager.getSimpletaskList(),
+        assertEquals(taskManager.getSimpleTaskList(), loadedTaskManager.getSimpleTaskList(),
                 "Список задач после выгрузки не совпадает");
     }
 
     @Test
     void shouldLoadFromFileEpicList() {
-        loadedTaskManager.addNewEpic(epic1);
+        loadedTaskManager.createEpic(epic1);
         loadedTaskManager.getEpicWithoutHistory(1);
-        taskManager.addNewEpic(epic1);
+        taskManager.createEpic(epic1);
 
         FileBackedTasksManager.loadFromFile(file);
 
@@ -105,25 +105,25 @@ class FileBackedTasksManagerTest extends InMemoryTaskManagerTest {
 
     @Test
     void shouldLoadFromFileSubTaskList() {
-        loadedTaskManager.addNewEpic(epic1);
-        loadedTaskManager.addNewSubtask(subTask);
-        loadedTaskManager.getSubtaskWithoutHistory(2);
-        taskManager.addNewEpic(epic2);
-        taskManager.addNewSubtask(subTask);
+        loadedTaskManager.createEpic(epic1);
+        loadedTaskManager.createSubTask(subTask);
+        loadedTaskManager.getSubTaskWithoutHistory(2);
+        taskManager.createEpic(epic2);
+        taskManager.createSubTask(subTask);
 
         FileBackedTasksManager.loadFromFile(file);
 
-        Assertions.assertEquals(taskManager.getSubtaskList(), loadedTaskManager.getSubtaskList(),
+        Assertions.assertEquals(taskManager.getSubTaskList(), loadedTaskManager.getSubTaskList(),
                 "Список задач после выгрузки не совпадает");
     }
 
     @Test
     void shouldLoadFromFileListOfPrioritized() {
-        loadedTaskManager.addNewSimpletask(simpleTask1);
-        loadedTaskManager.addNewSimpletask(simpleTask2);
+        loadedTaskManager.createSimpleTask(simpleTask1);
+        loadedTaskManager.createSimpleTask(simpleTask2);
         loadedTaskManager.getSimpleTaskWithoutHistory(1);
-        taskManager.addNewSimpletask(simpleTask1);
-        taskManager.addNewSimpletask(simpleTask2);
+        taskManager.createSimpleTask(simpleTask1);
+        taskManager.createSimpleTask(simpleTask2);
         FileBackedTasksManager.loadFromFile(file);
         Assertions.assertEquals(taskManager.getPrioritizedTasks(), loadedTaskManager.getPrioritizedTasks(),
                 "Список отсортированных задач после выгрузки не совпадает");
@@ -131,12 +131,12 @@ class FileBackedTasksManagerTest extends InMemoryTaskManagerTest {
 
     @Test
     void shouldLoadListOfHistoryFromFile() {
-        loadedTaskManager.addNewSimpletask(simpleTask1);
-        loadedTaskManager.addNewSimpletask(simpleTask2);
+        loadedTaskManager.createSimpleTask(simpleTask1);
+        loadedTaskManager.createSimpleTask(simpleTask2);
         loadedTaskManager.getSimpleTask(2);
         loadedTaskManager.getSimpleTask(1);
-        taskManager.addNewSimpletask(simpleTask1);
-        taskManager.addNewSimpletask(simpleTask2);
+        taskManager.createSimpleTask(simpleTask1);
+        taskManager.createSimpleTask(simpleTask2);
         taskManager.getSimpleTask(2);
         taskManager.getSimpleTask(1);
 

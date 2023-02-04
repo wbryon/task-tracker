@@ -31,7 +31,7 @@ class HistoryManagerTest {
 
     @Test
     void shouldAddTask() {
-        taskManager.addNewSimpletask(simpleTask);
+        taskManager.createSimpleTask(simpleTask);
         historyManager.add(simpleTask);
 
         expectedSimpleTask = historyManager.getHistory().get(0).toString();
@@ -41,7 +41,7 @@ class HistoryManagerTest {
 
     @Test
     void shouldNotAddTask() {
-        taskManager.addNewSimpletask(simpleTask);
+        taskManager.createSimpleTask(simpleTask);
 
         List<SimpleTask> expectedEmptyList = List.of();
 
@@ -50,7 +50,7 @@ class HistoryManagerTest {
 
     @Test
     void shouldNotDuplicateSimpleTaskInHistory() {
-        taskManager.addNewSimpletask(simpleTask);
+        taskManager.createSimpleTask(simpleTask);
         historyManager.add(simpleTask);
         historyManager.add(simpleTask);
 
@@ -62,9 +62,9 @@ class HistoryManagerTest {
 
     @Test
     void shouldDeleteSimpleTask() {
-        taskManager.addNewSimpletask(simpleTask);
-        taskManager.addNewEpic(epic);
-        taskManager.addNewSubtask(subTask);
+        taskManager.createSimpleTask(simpleTask);
+        taskManager.createEpic(epic);
+        taskManager.createSubTask(subTask);
         historyManager.add(simpleTask);
         historyManager.add(epic);
         historyManager.add(subTask);
@@ -77,9 +77,9 @@ class HistoryManagerTest {
 
     @Test
     void shouldDeleteEpic() {
-        taskManager.addNewSimpletask(simpleTask);
-        taskManager.addNewEpic(epic);
-        taskManager.addNewSubtask(subTask);
+        taskManager.createSimpleTask(simpleTask);
+        taskManager.createEpic(epic);
+        taskManager.createSubTask(subTask);
         historyManager.add(simpleTask);
         historyManager.add(epic);
         historyManager.add(subTask);
@@ -92,9 +92,9 @@ class HistoryManagerTest {
 
     @Test
     void shouldDeleteSubTask() {
-        taskManager.addNewSimpletask(simpleTask);
-        taskManager.addNewEpic(epic);
-        taskManager.addNewSubtask(subTask);
+        taskManager.createSimpleTask(simpleTask);
+        taskManager.createEpic(epic);
+        taskManager.createSubTask(subTask);
         historyManager.add(simpleTask);
         historyManager.add(epic);
         historyManager.add(subTask);

@@ -2,8 +2,10 @@ package controller;
 
 import server.KVServer;
 
+import java.net.URI;
+
 /**
- * Утилитарный класс, отвечающий за создание менеджера задач
+ * Утилитарный класс, отвечающий за создание менеджера задач и менеджера истории задач
  */
 public class Managers {
 
@@ -11,7 +13,7 @@ public class Managers {
      * Метод, возвращающий объект-менеджер
      */
     public static TaskManager getDefault() {
-        return new HttpTaskManager("http://localhost:" + KVServer.PORT + "/");
+        return new HttpTaskManager(URI.create("http://localhost:8888/"));
     }
 
     /**

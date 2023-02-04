@@ -8,6 +8,10 @@ import java.util.*;
 public interface TaskManager {
 
     /**
+     * Метод, возвращающий последний id
+     */
+    int getGeneratorId();
+    /**
      * Метод, возвращающий последние 10 просмотренных задач
      */
     List<Task> getHistory();
@@ -35,7 +39,7 @@ public interface TaskManager {
     /**
      * Метод для получения подзадачи по идентификатору
      */
-    SubTask getSubtaskWithoutHistory(int id);
+    SubTask getSubTaskWithoutHistory(int id);
 
     /**
      * Метод для получения подзадачи и истории просмотра по идентификатору
@@ -45,22 +49,22 @@ public interface TaskManager {
     /**
      * Метод для создания новой задачи
      */
-    int addNewSimpletask(SimpleTask task);
+    int createSimpleTask(SimpleTask task);
 
     /**
      * Метод для создания нового эпика
      */
-    int addNewEpic(Epic epic);
+    int createEpic(Epic epic);
 
     /**
      * Метод для создания новой подзадачи
      */
-    int addNewSubtask(SubTask subtask);
+    int createSubTask(SubTask subtask);
 
     /**
      * Метод для удаления задачи по идентификатору
      */
-    void deleteSimpletask(int id);
+    void deleteSimpleTask(int id);
 
     /**
      * Метод для удаления эпика по идентификатору
@@ -70,12 +74,12 @@ public interface TaskManager {
     /**
      * Метод для удаления подзадачи по идентификатору
      */
-    void deleteSubtask(int id);
+    void deleteSubTask(int id);
 
     /**
      * Метод для удаления всех задач
      */
-    void deleteAllSimpletasks();
+    void deleteAllSimpleTasks();
 
     /**
      * Метод для удаления всех эпиков
@@ -85,12 +89,12 @@ public interface TaskManager {
     /**
      * Метод для удаления всех подзадач
      */
-    void deleteAllSubtasks();
+    void deleteAllSubTasks();
 
     /**
      * Метод для получения списка всех задач
      */
-    ArrayList<SimpleTask> getSimpletaskList();
+    ArrayList<SimpleTask> getSimpleTaskList();
 
     /**
      * Метод для получения списка всех эпиков
@@ -100,17 +104,17 @@ public interface TaskManager {
     /**
      * Метод для получения списка всех подзадач
      */
-    ArrayList<SubTask> getSubtaskList();
+    ArrayList<SubTask> getSubTaskList();
 
     /**
      * Метод для получения списка всех подзадач эпика
      */
-    List<Integer> getEpicSubtasks(int epicId);
+    List<Integer> getEpicSubTasks(int epicId);
 
     /**
      * Метод для обновления задачи. Новая версия задачи с верным идентификатором передаётся в виде параметра
      */
-    SimpleTask updateSimpletask(SimpleTask task);
+    SimpleTask updateSimpleTask(SimpleTask task);
 
     /**
      * Метод для обновления эпика. Новая версия эпика с верным идентификатором передаётся в виде параметра
@@ -120,7 +124,7 @@ public interface TaskManager {
     /**
      * Метод для обновления подзадачи. Новая версия подзадачи с верным идентификатором передаётся в виде параметра
      */
-    SubTask updateSubtask(SubTask subtask);
+    SubTask updateSubTask(SubTask subtask);
 
     List<Task> getPrioritizedTasks();
 }

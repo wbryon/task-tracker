@@ -13,7 +13,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected final HistoryManager historyManager = Managers.getDefaultHistory();
 
     @Override
-    public int addNewSimpletask(SimpleTask task) {
+    public int createSimpleTask(SimpleTask task) {
         task.setId(++generatorId);
         task.setStatus(Status.NEW);
         taskRepo.put(task.getId(), task);
@@ -22,7 +22,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public int addNewEpic(Epic epic) {
+    public int createEpic(Epic epic) {
         epic.setId(++generatorId);
         epic.setStatus(Status.NEW);
         setEpicStartTime(epic);
@@ -33,7 +33,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public int addNewSubtask(SubTask subtask) {
+    public int createSubTask(SubTask subtask) {
         Epic epic = epicRepo.get(subtask.getEpicId());
         if (epic == null)
             return 0;
@@ -83,7 +83,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public SubTask getSubtaskWithoutHistory(int id) {
+    public SubTask getSubTaskWithoutHistory(int id) {
         if (!subtaskRepo.containsKey(id))
             return null;
         return subtaskRepo.get(id);
@@ -98,7 +98,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteSimpletask(int id) {
+    public void deleteSimpleTask(int id) {
         if (!taskRepo.containsKey(id))
             return;
         taskRepo.remove(id);
@@ -120,7 +120,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteSubtask(int id) {
+    public void deleteSubTask(int id) {
         if (subtaskRepo.containsKey(id)) {
             subtaskRepo.remove(id);
             historyManager.remove(id);
@@ -128,7 +128,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteAllSimpletasks() {
+    public void deleteAllSimpleTasks() {
         if (taskRepo.isEmpty())
             return;
         for (Integer id : taskRepo.keySet())
@@ -152,7 +152,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteAllSubtasks() {
+    public void deleteAllSubTasks() {
         if (subtaskRepo.isEmpty())
             return;
         for (Integer id : subtaskRepo.keySet())
@@ -163,7 +163,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<SimpleTask> getSimpletaskList() {
+    public ArrayList<SimpleTask> getSimpleTaskList() {
         return new ArrayList<>(taskRepo.values());
     }
 
@@ -173,17 +173,17 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<SubTask> getSubtaskList() {
+    public ArrayList<SubTask> getSubTaskList() {
         return new ArrayList<>(subtaskRepo.values());
     }
 
     @Override
-    public List<Integer> getEpicSubtasks(int epicId) {
+    public List<Integer> getEpicSubTasks(int epicId) {
         return epicRepo.get(epicId).getSubtasksIds();
     }
 
     @Override
-    public SimpleTask updateSimpletask(SimpleTask task) {
+    public SimpleTask updateSimpleTask(SimpleTask task) {
         SimpleTask result = null;
         if (taskRepo.containsKey(task.getId())) {
             final SimpleTask updatableTask = taskRepo.get(task.getId());
@@ -201,7 +201,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public SubTask updateSubtask(SubTask subtask) {
+    public SubTask updateSubTask(SubTask subtask) {
         SubTask result = null;
         Epic epic = getEpicWithoutHistory(subtask.getEpicId());
         if (epic != null) {
@@ -236,7 +236,7 @@ public class InMemoryTaskManager implements TaskManager {
      * Метод для обновления статуса эпика
      */
     public void updateEpicStatus(Epic epic) {
-        Set<Status> statusChecker = new HashSet();
+        Set<Status> statusChecker = new HashSet<>();
         for (Integer subtaskId : epic.getSubtasksIds())
             statusChecker.add(subtaskRepo.get(subtaskId).getStatus());
         if ((statusChecker.contains(Status.NEW) && statusChecker.size() == 1) || statusChecker.isEmpty())
@@ -256,13 +256,13 @@ public class InMemoryTaskManager implements TaskManager {
         Duration durationEpic = Duration.ZERO;
 
         for (Integer subTaskId : epic.getSubtasksIds()) {
-            LocalDateTime subtaskStartTime = getSubtaskWithoutHistory(subTaskId).getStartTime();
-            LocalDateTime subtaskEndTime = getSubtaskWithoutHistory(subTaskId).getEndTime();
+            LocalDateTime subtaskStartTime = getSubTaskWithoutHistory(subTaskId).getStartTime();
+            LocalDateTime subtaskEndTime = getSubTaskWithoutHistory(subTaskId).getEndTime();
             if (subtaskStartTime.isBefore(epicStartTime))
                 epic.setStartTime(subtaskStartTime);
             if (subtaskEndTime.isAfter(epicEndTime))
                 epic.setEndTime(subtaskEndTime);
-            durationEpic = durationEpic.plus(getSubtaskWithoutHistory(subTaskId).getDuration());
+            durationEpic = durationEpic.plus(getSubTaskWithoutHistory(subTaskId).getDuration());
             epic.setDuration(durationEpic);
         }
         return epic.getDuration();
@@ -275,7 +275,7 @@ public class InMemoryTaskManager implements TaskManager {
         epic.setStartTime(LocalDateTime.MAX);
         if (!epic.getSubtasksIds().isEmpty()) {
             for (Integer subTaskId : epic.getSubtasksIds()) {
-                SubTask subtask = getSubtaskWithoutHistory(subTaskId);
+                SubTask subtask = getSubTaskWithoutHistory(subTaskId);
                 LocalDateTime startSubtask = subtask.getStartTime();
                 epic.setStartTime(startSubtask);
                 if (startSubtask.isBefore(epic.getStartTime()))
@@ -292,7 +292,7 @@ public class InMemoryTaskManager implements TaskManager {
         epic.setEndTime(LocalDateTime.MIN);
         if (!epic.getSubtasksIds().isEmpty()) {
             for (Integer subTaskId : epic.getSubtasksIds()) {
-                SubTask subtask = getSubtaskWithoutHistory(subTaskId);
+                SubTask subtask = getSubTaskWithoutHistory(subTaskId);
                 LocalDateTime endSubtask = subtask.getEndTime();
                 epic.setEndTime(endSubtask);
                 if (endSubtask.isAfter(epic.getEndTime()))
@@ -308,7 +308,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected Duration setEpicDuration(Epic epic) {
         Duration epicDuration = Duration.ZERO;
         for (Integer subTaskId : epic.getSubtasksIds()) {
-            SubTask subTask = getSubtaskWithoutHistory(subTaskId);
+            SubTask subTask = getSubTaskWithoutHistory(subTaskId);
             epicDuration.plus(subTask.getDuration());
         }
         epic.setDuration(epicDuration);
@@ -351,5 +351,9 @@ public class InMemoryTaskManager implements TaskManager {
             return false;
         }
         return true;
+    }
+
+    public int getGeneratorId() {
+        return generatorId;
     }
 }

@@ -19,18 +19,18 @@ public class Main {
 
         SimpleTask simpleTask1 = new SimpleTask("Задача 1", "Описание задачи 1",
                 "09:00 | 09.01.2023", 60);
-        taskManager.addNewSimpletask(simpleTask1);
+        taskManager.createSimpleTask(simpleTask1);
 
         SimpleTask simpleTask2 = new SimpleTask("Задача 2", "Описание задачи 2",
                 "22:00 | 11.01.2023", 30);
-        taskManager.addNewSimpletask(simpleTask2);
+        taskManager.createSimpleTask(simpleTask2);
 
         SimpleTask simpleTask3 = new SimpleTask("Задача 3", "Описание задачи 3",
                 "12:00 | 16.01.2023", 57);
-        taskManager.addNewSimpletask(simpleTask3);
+        taskManager.createSimpleTask(simpleTask3);
 
         Epic epic1 = new Epic("Эпик 1", "Эпик 1");
-        int epicId1 = taskManager.addNewEpic(epic1);
+        int epicId1 = taskManager.createEpic(epic1);
 
         SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1 эпика1",
                 "22:15 | 08.01.2023", 20, epic1.getId());
@@ -41,9 +41,9 @@ public class Main {
         SubTask subTask3 = new SubTask("Подзадача 1", "Описание подзадачи 1 эпика1",
                 "11:15 | 18.01.2023", 40, epic1.getId());
 
-        taskManager.addNewSubtask(subTask1);
-        taskManager.addNewSubtask(subTask2);
-        taskManager.addNewSubtask(subTask3);
+        taskManager.createSubTask(subTask1);
+        taskManager.createSubTask(subTask2);
+        taskManager.createSubTask(subTask3);
 
         taskManager.getSimpleTaskWithoutHistory(3);
         taskManager.getSimpleTaskWithoutHistory(3);
@@ -55,10 +55,10 @@ public class Main {
         taskManager.getSimpleTaskWithoutHistory(1);
         taskManager.getSimpleTaskWithoutHistory(3);
         taskManager.getEpicWithoutHistory(4);
-        taskManager.getSubtaskWithoutHistory(7);
-        taskManager.getSubtaskWithoutHistory(6);
-        taskManager.getSubtaskWithoutHistory(5);
-        taskManager.getSubtaskWithoutHistory(6);
+        taskManager.getSubTaskWithoutHistory(7);
+        taskManager.getSubTaskWithoutHistory(6);
+        taskManager.getSubTaskWithoutHistory(5);
+        taskManager.getSubTaskWithoutHistory(6);
         taskManager.getEpicWithoutHistory(8);
         for (Task task : taskManager.getHistory()) {
             System.out.println(task);
