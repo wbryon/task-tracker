@@ -16,14 +16,16 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.regex.Pattern;
 
 import model.*;
 
-import static jdk.internal.util.xml.XMLStreamWriter.DEFAULT_CHARSET;
-
 public class HttpTaskServer {
     public static final int PORT = 8888;
+    private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private final HttpServer httpServer;
     private final Gson gson;
     public final TaskManager taskManager;
@@ -32,7 +34,7 @@ public class HttpTaskServer {
         taskManager = Managers.getDefault();
         httpServer = HttpServer.create();
         httpServer.bind(new InetSocketAddress("localhost", PORT), 0);
-        httpServer.createContext("", this::handle);
+        httpServer.createContext("/tasks", this::handle);
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateAdapter());
         gson = gsonBuilder.create();
@@ -41,6 +43,8 @@ public class HttpTaskServer {
     public void handle(HttpExchange exchange) throws IOException {
         String path = exchange.getRequestURI().getPath();
         String method = exchange.getRequestMethod();
+        String query = exchange.getRequestURI().getQuery();
+        Endpoint endpoint = getEndpoint(path, query, method);
     }
 
     public void start() {
@@ -88,5 +92,56 @@ public class HttpTaskServer {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    enum Endpoint {GET_POSTS, GET_COMMENTS, POST_COMMENT, UNKNOWN}
+    private Endpoint getEndpoint(String path, String query, String requestMethod) {
+
+        switch (requestMethod) {
+            case "GET":
+                if (!Pattern.matches("^/tasks/task$", path)) {
+                    if (Pattern.matches("^/tasks/subtask$", path))
+                        return Endpoint.GET_ALL_SUBTASKS;
+                    if (Pattern.matches("^/tasks/epic$", path))
+                        return Endpoint.GET_ALL_EPICS;
+                    if (Pattern.matches("^/tasks/$", path))
+                        return Endpoint.GET_ALL_TASKS;
+                    if (Pattern.matches("^/tasks/task/id=\\d+$", path + query))
+                        return Endpoint.GET_SIMPLETASK_BY_ID;
+                    if (Pattern.matches("^/tasks/subtask/id=\\d+$", path + query))
+                        return Endpoint.GET_SUBTASK_BY_ID;
+                    if (Pattern.matches("^/tasks/epic/id=\\d+$", path + query))
+                        return Endpoint.GET_EPIC_BY_ID;
+                    if (Pattern.matches("^/tasks/subtask/epic/id=\\d+$", path + query))
+                        return Endpoint.GET_EPIC_SUBTASKS;
+                    if (Pattern.matches("^/tasks/history$", path))
+                        return Endpoint.GET_HISTORY;
+                } else
+                    return Endpoint.GET_ALL_SIMPLETASKS;
+                break;
+            case "POST":
+                if (Pattern.matches("^/tasks/task$", path))
+                    return Endpoint.POST_SIMPLE_TASK;
+                if (Pattern.matches("^/tasks/subtask$", path))
+                    return Endpoint.POST_SUBTASK;
+                if (Pattern.matches("^/tasks/epic$", path))
+                    return Endpoint.POST_EPIC;
+                break;
+            case "DELETE":
+                if (Pattern.matches("^/tasks/task/id=\\d+$", path + query))
+                    return Endpoint.DELETE_SIMPLE_TASK;
+                if (Pattern.matches("^/tasks/subtask/id=\\d+$", path + query))
+                    return Endpoint.DELETE_SUBTASK;
+                if (Pattern.matches("^/tasks/epic/id=\\d+$", path + query))
+                    return Endpoint.DELETE_EPIC;
+                if (Pattern.matches("^/tasks/task$", path))
+                    return Endpoint.DELETE_ALL_SIMPLETASKS;
+                if (Pattern.matches("^/tasks/subtask$", path))
+                    return Endpoint.DELETE_ALL_SUBTASKS;
+                if (Pattern.matches("^/tasks/epic$", path))
+                    return Endpoint.DELETE_ALL_EPICS;
+                if (Pattern.matches("^/tasks/$", path))
+                    return Endpoint.DELETE_ALL_TASKS;
+            default:
+                System.out.println("Эндпойнт не найден");
+        }
+        return Endpoint.UNKNOWN;
+    }
 }
