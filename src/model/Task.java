@@ -22,7 +22,6 @@ public class Task {
     }
 
     public Task(String taskName, String taskDescription, LocalDateTime startTime, int duration) {
-        LocalDateAdapter adapter = new LocalDateAdapter();
         this.taskName = taskName;
         this.taskDescription = taskDescription;
         this.startTime = startTime;

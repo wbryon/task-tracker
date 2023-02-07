@@ -20,7 +20,6 @@ public class HttpTaskManagerTest extends FileBackedTasksManagerTest {
     private HttpTaskServer server;
     private static HttpClient client;
     private Gson gson;
-    LocalDateAdapter adapter = new LocalDateAdapter();
 
     SimpleTask simpleTask1;
     SimpleTask simpleTask2;
@@ -48,9 +47,9 @@ public class HttpTaskManagerTest extends FileBackedTasksManagerTest {
     @Test
     public void shouldGetSimpleTaskByEndpointTest() throws IOException, InterruptedException {
         simpleTask1 = new SimpleTask("Задача 1", "Описание задачи 1",
-                LocalDateTime.parse("09:00 | 09.01.2023", adapter.formatter), 60);
+                LocalDateTime.parse("09:00 | 09.01.2023", LocalDateAdapter.formatter), 60);
         simpleTask2 = new SimpleTask("Задача 2", "Описание задачи 2",
-                LocalDateTime.parse("22:00 | 11.01.2023", adapter.formatter), 30);
+                LocalDateTime.parse("22:00 | 11.01.2023", LocalDateAdapter.formatter), 30);
 
         taskManager.createSimpleTask(simpleTask1);
         taskManager.createSimpleTask(simpleTask2);
