@@ -1,5 +1,7 @@
 package model;
 
+import java.time.LocalDateTime;
+
 /**
  * Класс для создания объектов подзадач
  */
@@ -12,7 +14,7 @@ public class SubTask extends Task {
         this.epicId = epicId;
     }
 
-    public SubTask(String taskName, String taskDescription, String start, int duration, int epicId) {
+    public SubTask(String taskName, String taskDescription, LocalDateTime start, int duration, int epicId) {
         super(taskName, taskDescription, start, duration);
         this.epicId = epicId;
     }
@@ -34,16 +36,16 @@ public class SubTask extends Task {
     /**
      * Переопределённый метод toString
      */
-    @Override
-    public String toString() {
-        return id + "," +
-                "SUBTASK" + "," +
-                taskName + "," +
-                status + "," +
-                taskDescription + "," +
-                startTime + "," +
-                duration + "," +
-                getEndTime() + "," +
-                epicId;
-    }
+//    @Override
+//    public String toString() {
+//        return id + "," +
+//                "SUBTASK" + "," +
+//                taskName + "," +
+//                status + "," +
+//                taskDescription + "," +
+//                startTime + "," +
+//                duration + "," +
+//                getEndTime() + "," +
+//                epicId;
+//    }
 }

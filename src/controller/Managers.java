@@ -13,7 +13,7 @@ public class Managers {
      * Метод, возвращающий объект-менеджер
      */
     public static TaskManager getDefault() {
-        return new HttpTaskManager(URI.create("http://localhost:8888/"));
+        return new HttpTaskManager(URI.create("http://localhost:8078/register"));
     }
 
     /**

@@ -1,37 +1,40 @@
 package server;
 
 import com.google.gson.*;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpServer;
-import controller.Managers;
-import controller.TaskManager;
+import com.sun.net.httpserver.*;
+import controller.*;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.InetSocketAddress;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
+import java.nio.charset.*;
+import java.time.LocalDateTime;
 import java.util.regex.Pattern;
 
 import model.*;
 
 public class HttpTaskServer {
-    public static final int PORT = 8888;
+    public static final int PORT = 8080;
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private final HttpServer httpServer;
     private final Gson gson;
     public final TaskManager taskManager;
 
+    public TaskManager getTaskManager() {
+        return taskManager;
+    }
+
     public HttpTaskServer() throws IOException {
-        taskManager = Managers.getDefault();
         httpServer = HttpServer.create();
         httpServer.bind(new InetSocketAddress(PORT), 0);
         httpServer.createContext("/task", this::handle);
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateAdapter());
-        gson = gsonBuilder.create();
+        taskManager = Managers.getDefault();
+        gson  = new GsonBuilder()
+                .setPrettyPrinting()
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateAdapter())
+                .create();
+        start();
+        System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
+        System.out.println("http://localhost:" + PORT + "/task");
     }
 
     /**
@@ -261,7 +264,6 @@ public class HttpTaskServer {
      * Метод, запускающий сервер
      */
     public void start() {
-        System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
         httpServer.start();
     }
 
@@ -293,25 +295,4 @@ public class HttpTaskServer {
         exchange.close();
     }
 }
-enum Endpoint {
-    GET_SIMPLETASK_BY_ID,
-    GET_SUBTASK_BY_ID,
-    GET_EPIC_BY_ID,
-    GET_ALL_SIMPLETASKS,
-    GET_ALL_SUBTASKS,
-    GET_ALL_EPICS,
-    GET_ALL_TASKS,
-    POST_SIMPLE_TASK,
-    POST_SUBTASK,
-    POST_EPIC,
-    DELETE_SIMPLE_TASK,
-    DELETE_SUBTASK,
-    DELETE_EPIC,
-    DELETE_ALL_TASKS,
-    DELETE_ALL_SIMPLETASKS,
-    DELETE_ALL_SUBTASKS,
-    DELETE_ALL_EPICS,
-    GET_EPIC_SUBTASKS,
-    GET_HISTORY,
-    UNKNOWN
-}
+

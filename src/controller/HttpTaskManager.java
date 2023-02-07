@@ -1,19 +1,13 @@
 package controller;
 
 import client.KVTaskClient;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import model.Epic;
-import model.SimpleTask;
-import model.SubTask;
-import model.Task;
+import com.google.gson.*;
+import model.*;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class HttpTaskManager extends FileBackedTasksManager {
     private KVTaskClient taskClient;
@@ -25,9 +19,10 @@ public class HttpTaskManager extends FileBackedTasksManager {
      * Нужно заменить вызовы сохранения состояния в файлах на вызов клиента.
      */
     public HttpTaskManager(URI uri) {
-        super(null);
         try {
-            gson = new Gson();
+            gson = new GsonBuilder()
+                    .registerTypeAdapter(LocalDateTime.class, new LocalDateAdapter())
+                    .create();
             taskClient = new KVTaskClient(uri);
             load();
         } catch (Exception e) {
@@ -35,11 +30,12 @@ public class HttpTaskManager extends FileBackedTasksManager {
         }
     }
 
+    @Override
     protected void save() {
         try {
-            taskClient.put("allSimpleTasks", gson.toJson(List.of(taskRepo.values())));
-            taskClient.put("allSubTasks", gson.toJson(List.of(subtaskRepo.values())));
-            taskClient.put("allEpics", gson.toJson(List.of(epicRepo.values())));
+            taskClient.put("task", gson.toJson(List.of(taskRepo.values())));
+            taskClient.put("subtask", gson.toJson(List.of(subtaskRepo.values())));
+            taskClient.put("epic", gson.toJson(List.of(epicRepo.values())));
             taskClient.put("history", gson.toJson(getHistory()));
             taskClient.put("prioritizedTasks", gson.toJson(getPrioritizedTasks()));
         } catch (Exception e) {
@@ -48,15 +44,16 @@ public class HttpTaskManager extends FileBackedTasksManager {
     }
 
     private void load() throws IOException, InterruptedException {
-        List<Task> simpleTaskList = getTasksFromJson(taskClient.load("allSimpleTasks"));
-        List<Task> subTaskList = getTasksFromJson(taskClient.load("allSubTasks"));
-        List<Task> epicList = getTasksFromJson(taskClient.load("allEpics"));
+        List<Task> simpleTaskList = getTasksFromJson(taskClient.load("task"));
+        List<Task> subTaskList = getTasksFromJson(taskClient.load("subtask"));
+        List<Task> epicList = getTasksFromJson(taskClient.load("epic"));
         List<Task> history = getTasksFromJson(taskClient.load("history"));
         List<Task> prioritizedList = getTasksFromJson(taskClient.load("prioritizedTasks"));
         simpleTaskList.forEach(task -> taskRepo.put(task.getId(), (SimpleTask) task));
         subTaskList.forEach(subtask -> subtaskRepo.put(subtask.getId(), (SubTask) subtask));
         epicList.forEach(epic -> epicRepo.put(epic.getId(), (Epic) epic));
         history.forEach(historyManager::add);
+        allTasks.addAll(prioritizedList);
     }
 
     private List<Task> getTasksFromJson(String json) {

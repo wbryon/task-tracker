@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter;
 /**
  * Родительский класс для классов SimpleTask, Epic и SubTask
  */
-public abstract class Task {
+public class Task {
     protected String taskName;
     protected String taskDescription;
     protected int id;
@@ -21,16 +21,17 @@ public abstract class Task {
         this.taskDescription = taskDescription;
     }
 
-    public Task(String taskName, String taskDescription, String start, int duration) {
+    public Task(String taskName, String taskDescription, LocalDateTime startTime, int duration) {
+        LocalDateAdapter adapter = new LocalDateAdapter();
         this.taskName = taskName;
         this.taskDescription = taskDescription;
-        this.startTime = getStartTimeOfTaskFromString(start);
+        this.startTime = startTime;
         this.duration = getDurationOfTaskFromString(duration);
         setStatus(Status.NEW);
         getEndTime();
     }
 
-    public LocalDateTime getStartTimeOfTaskFromString(String start) {
+    protected LocalDateTime getStartTimeOfTaskFromString(String start) {
         return LocalDateTime.parse(start, formatter);
     }
 
@@ -118,4 +119,16 @@ public abstract class Task {
     public void setStatus(Status status) {
         this.status = status;
     }
+
+//    @Override
+//    public String toString() {
+//        return "Task{" +
+//                "name='" + taskName + '\'' +
+//                ", description='" + taskDescription + '\'' +
+//                ", id=" + id +
+//                ", status=" + status +
+//                ", duration=" + duration.toMinutes() + "мин" +
+//                ", startTime=" + startTime.format(formatter) +
+//                '}';
+//    }
 }

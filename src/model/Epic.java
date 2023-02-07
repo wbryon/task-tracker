@@ -31,17 +31,17 @@ public class Epic extends Task {
     /**
      * Переопределённый метод toString
      */
-    @Override
-    public String toString() {
-        return id + "," +
-                "EPIC" + "," +
-                taskName + "," +
-                status + "," +
-                taskDescription + "," +
-                startTime + "," +
-                duration + "," +
-                getEndTime();
-    }
+//    @Override
+//    public String toString() {
+//        return id + "," +
+//                "EPIC" + "," +
+//                taskName + "," +
+//                status + "," +
+//                taskDescription + "," +
+//                startTime + "," +
+//                duration + "," +
+//                getEndTime();
+//    }
 
     @Override
     public LocalDateTime getEndTime() {

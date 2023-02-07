@@ -11,6 +11,12 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, SubTask> subtaskRepo = new HashMap<>();
     protected final Map<LocalDateTime, Task> mapOfPrioritizedTasks = new TreeMap<>();
     protected final HistoryManager historyManager = Managers.getDefaultHistory();
+    protected Comparator<Task> compareTasksByStartTime = (task1, task2) -> {
+        if (task1.getStartTime().isBefore(task2.getStartTime())) return -1;
+        if (task1.equals(task2)) return 0;
+        return 1;
+    };
+    protected final Set<Task> allTasks = new TreeSet<>(compareTasksByStartTime);
 
     @Override
     public int createSimpleTask(SimpleTask task) {
@@ -332,6 +338,7 @@ public class InMemoryTaskManager implements TaskManager {
      */
     @Override
     public List<Task> getPrioritizedTasks() {
+        allTasks.addAll(mapOfPrioritizedTasks.values());
         return new ArrayList<>(mapOfPrioritizedTasks.values());
     }
 

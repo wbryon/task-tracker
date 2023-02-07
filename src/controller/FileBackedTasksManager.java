@@ -10,8 +10,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm | dd.MM.yyyy");
-    private final File file;
+    private File file;
+
+    public FileBackedTasksManager() {
+    }
     public FileBackedTasksManager(File file) {
         this.file = file;
     }
@@ -19,7 +21,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     /**
      * Метод, сохраняющий текущее состояние менеджера в указанный файл
      */
-    private void save() {
+    protected void save() {
         String PATH = "resources/task.csv";
         File file = new File(PATH);
         try (final BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
@@ -46,7 +48,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
             switch (TaskType.valueOf(fields[1])) {
                 case SIMPLETASK:
-                    task = new SimpleTask(fields[2], fields[4], fields[5], Integer.parseInt(fields[7]));
+                    task = new SimpleTask(fields[2], fields[4], LocalDateTime.parse(fields[5], LocalDateAdapter.formatter), Integer.parseInt(fields[7]));
                     task.setId(Integer.parseInt(fields[0]));
                     task.setStatus(Status.valueOf(fields[3]));
                     task.getEndTime();
@@ -56,13 +58,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     task.setId(Integer.parseInt(fields[0]));
                     task.setStatus(Status.valueOf(fields[3]));
                     if (!fields[5].equals("null")) {
-                        task.setStartTime(LocalDateTime.parse(fields[5], formatter));
+                        task.setStartTime(LocalDateTime.parse(fields[5], LocalDateAdapter.formatter));
                         task.setDuration(Duration.ofMinutes(Long.parseLong(fields[7])));
                         setEpicEndTime((Epic) task);
                     }
                     break;
                 case SUBTASK:
-                    task = new SubTask(fields[2], fields[4], fields[5],
+                    task = new SubTask(fields[2], fields[4], LocalDateTime.parse(fields[5], LocalDateAdapter.formatter),
                             Integer.parseInt(fields[7]), Integer.parseInt(fields[8]));
                     task.setId(Integer.parseInt(fields[0]));
                     task.setStatus(Status.valueOf(fields[3]));
@@ -79,17 +81,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 if (task instanceof SubTask)
                 return task.getId() + "," + TaskType.SUBTASK + "," + task.getTaskName() + "," +
                         task.getStatus() + "," + task.getTaskDescription() + "," + task.getStartTime().
-                        format(formatter) + "," + task.getEndTime().format(formatter) + "," +
+                        format(LocalDateAdapter.formatter) + "," + task.getEndTime().format(LocalDateAdapter.formatter) + "," +
                         task.getDuration().toMinutes() + "," + ((SubTask) task).getEpicId() + "\n";
             else if (task instanceof SimpleTask)
                 return task.getId() + "," + TaskType.SIMPLETASK + "," + task.getTaskName() + "," +
                         task.getStatus() + "," + task.getTaskDescription() + "," + task.getStartTime().
-                        format(formatter) + "," + task.getEndTime().format(formatter) + "," +
+                        format(LocalDateAdapter.formatter) + "," + task.getEndTime().format(LocalDateAdapter.formatter) + "," +
                         task.getDuration().toMinutes() + "\n";
             else {
                 return task.getId() + "," + TaskType.EPIC + "," + task.getTaskName() + "," + task.getStatus() +
-                        "," + task.getTaskDescription() + "," + task.getStartTime().format(formatter) + "," +
-                        task.getEndTime().format(formatter) + "," + task.getDuration().toMinutes() + "\n";
+                        "," + task.getTaskDescription() + "," + task.getStartTime().format(LocalDateAdapter.formatter) + "," +
+                        task.getEndTime().format(LocalDateAdapter.formatter) + "," + task.getDuration().toMinutes() + "\n";
             }
         }
 
@@ -191,6 +193,27 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         super.createSubTask(subtask);
         save();
         return subtask.getId();
+    }
+
+    @Override
+    public ArrayList<SimpleTask> getSimpleTaskList() {
+        ArrayList<SimpleTask> simpleTaskList =  super.getSimpleTaskList();
+        save();
+        return simpleTaskList;
+    }
+
+    @Override
+    public ArrayList<Epic> getEpicList() {
+        ArrayList<Epic> epicList = super.getEpicList();
+        save();
+        return epicList;
+    }
+
+    @Override
+    public ArrayList<SubTask> getSubTaskList() {
+        ArrayList<SubTask> subTaskList = super.getSubTaskList();
+        save();
+        return subTaskList;
     }
 
     @Override
@@ -333,88 +356,88 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     /**
      * Статический метод, проверяющий работу сохранения и восстановления менеджера из файла (сериализация)
      */
-    public static void main(String[] args) {
-
-        File file = new File("resources/task.csv");
-        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(file);
-
-        System.out.println("------------------Создание задач--------------------------");
-        SimpleTask simpleTask1 = new SimpleTask("Задача 1", "Описание задачи 1",
-                "09:00 | 09.01.2023", 60);
-        fileBackedTasksManager.createSimpleTask(simpleTask1);
-
-        SimpleTask simpleTask2 = new SimpleTask("Задача 2", "Описание задачи 2",
-                "22:00 | 11.01.2023", 30);
-        fileBackedTasksManager.createSimpleTask(simpleTask2);
-
-        System.out.println("Задача 1 начата: " + simpleTask1.getStartTime().format(DateTimeFormatter.
-                ofPattern("HH:mm | dd.MM.yyyy")) + "; длительность: " + simpleTask1.getDuration().toMinutes() +
-                "; задача 1 окончена: " + simpleTask1.getEndTime());
-        System.out.println("Задача 2 начата: " + simpleTask2.getStartTime().format(DateTimeFormatter.
-                ofPattern("HH:mm | dd.MM.yyyy")) + "; длительность: " + simpleTask2.getDuration().toMinutes() +
-                "; задача 2 окончена: " + simpleTask2.getEndTime());
-
-        System.out.println("------------------------------Создание эпика------------------------------");
-        Epic epic1 = new Epic("Эпик 1", "Описание эпика 1");
-        fileBackedTasksManager.createEpic(epic1);
-
-        System.out.println("Эпик без подзадач начат: " + epic1.getStartTime().format(DateTimeFormatter.
-                ofPattern("HH:mm | dd.MM.yyyy")) + "; длительность: " + epic1.getDuration().toMinutes() +
-                "; эпик без подзадач окончен: " + epic1.getEndTime().format(DateTimeFormatter.
-                ofPattern("HH:mm | dd.MM.yyyy")));
-
-        System.out.println("-------------------Создание подзадач--------------------------");
-        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1 эпика1",
-                "22:15 | 08.01.2023", 20, epic1.getId());
-
-        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2 эпика1",
-                "10:00 | 10.01.2023", 15, epic1.getId());
-        fileBackedTasksManager.createSubTask(subTask1);
-
-        System.out.println("Подзадача 1 начата: " + subTask1.getStartTime().format(DateTimeFormatter.
-                ofPattern("HH:mm | dd.MM.yyyy")) + "; длительность: " + subTask1.getDuration().toMinutes() +
-                "; подзадача окончена: " + subTask1.getEndTime().format(DateTimeFormatter.
-                ofPattern("HH:mm | dd.MM.yyyy")));
-        fileBackedTasksManager.createSubTask(subTask2);
-
-        System.out.println("Подзадача 2 начата: " + subTask2.getStartTime().format(DateTimeFormatter.
-                ofPattern("HH:mm | dd.MM.yyyy")) + "; длительность: " + subTask2.getDuration().toMinutes() +
-                "; подзадача окончена: " + subTask2.getEndTime().format(DateTimeFormatter.
-                ofPattern("HH:mm | dd.MM.yyyy")));
-
-        System.out.println("Эпик с подзадачами начат: " + epic1.getStartTime().format(DateTimeFormatter.
-                ofPattern("HH:mm | dd.MM.yyyy")) + "; длительность: " + epic1.getDuration().toMinutes() +
-                "; эпик с подзадачами окончен: " + epic1.getEndTime().format(DateTimeFormatter.
-                ofPattern("HH:mm | dd.MM.yyyy")));
-
-        System.out.println("\nИзменение статуса различных типов задач----------------------------");
-        subTask1.setStatus(Status.DONE);
-        subTask2.setStatus(Status.DONE);
-        simpleTask1.setStatus(Status.IN_PROGRESS);
-        System.out.println("\nЗадачи----------------------------");
-        for (Task task : fileBackedTasksManager.getSimpleTaskList())
-            System.out.println(task);
-        System.out.println("\nПодзадачи------------------------");
-        for (Task task : fileBackedTasksManager.getSubTaskList()) {
-            System.out.println(task);
-        }
-        System.out.println("\nЭпики-----------------------------");
-        for (Task task : fileBackedTasksManager.getEpicList()) {
-            System.out.println(task);
-        }
-
-        fileBackedTasksManager.getSimpleTask(simpleTask1.getId());
-        fileBackedTasksManager.getEpic(epic1.getId());
-//        fileBackedTasksManager.getSimpletask(1);
-        System.out.println("\nИстория задач--------------------------");
-        for (Task task : fileBackedTasksManager.getHistory()) {
-            System.out.println(task);
-        }
-        System.out.println("\nОтсортированные задачи-----------------------");
-        for (Task task : fileBackedTasksManager.getPrioritizedTasks()) {
-            System.out.println(task);
-        }
-
-        FileBackedTasksManager.loadFromFile(file);
-    }
+//    public static void main(String[] args) {
+//
+//        File file = new File("resources/task.csv");
+//        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(file);
+//
+//        System.out.println("------------------Создание задач--------------------------");
+//        SimpleTask simpleTask1 = new SimpleTask("Задача 1", "Описание задачи 1",
+//                "09:00 | 09.01.2023", 60);
+//        fileBackedTasksManager.createSimpleTask(simpleTask1);
+//
+//        SimpleTask simpleTask2 = new SimpleTask("Задача 2", "Описание задачи 2",
+//                "22:00 | 11.01.2023", 30);
+//        fileBackedTasksManager.createSimpleTask(simpleTask2);
+//
+//        System.out.println("Задача 1 начата: " + simpleTask1.getStartTime().format(DateTimeFormatter.
+//                ofPattern("HH:mm | dd.MM.yyyy")) + "; длительность: " + simpleTask1.getDuration().toMinutes() +
+//                "; задача 1 окончена: " + simpleTask1.getEndTime());
+//        System.out.println("Задача 2 начата: " + simpleTask2.getStartTime().format(DateTimeFormatter.
+//                ofPattern("HH:mm | dd.MM.yyyy")) + "; длительность: " + simpleTask2.getDuration().toMinutes() +
+//                "; задача 2 окончена: " + simpleTask2.getEndTime());
+//
+//        System.out.println("------------------------------Создание эпика------------------------------");
+//        Epic epic1 = new Epic("Эпик 1", "Описание эпика 1");
+//        fileBackedTasksManager.createEpic(epic1);
+//
+//        System.out.println("Эпик без подзадач начат: " + epic1.getStartTime().format(DateTimeFormatter.
+//                ofPattern("HH:mm | dd.MM.yyyy")) + "; длительность: " + epic1.getDuration().toMinutes() +
+//                "; эпик без подзадач окончен: " + epic1.getEndTime().format(DateTimeFormatter.
+//                ofPattern("HH:mm | dd.MM.yyyy")));
+//
+//        System.out.println("-------------------Создание подзадач--------------------------");
+//        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1 эпика1",
+//                "22:15 | 08.01.2023", 20, epic1.getId());
+//
+//        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2 эпика1",
+//                "10:00 | 10.01.2023", 15, epic1.getId());
+//        fileBackedTasksManager.createSubTask(subTask1);
+//
+//        System.out.println("Подзадача 1 начата: " + subTask1.getStartTime().format(DateTimeFormatter.
+//                ofPattern("HH:mm | dd.MM.yyyy")) + "; длительность: " + subTask1.getDuration().toMinutes() +
+//                "; подзадача окончена: " + subTask1.getEndTime().format(DateTimeFormatter.
+//                ofPattern("HH:mm | dd.MM.yyyy")));
+//        fileBackedTasksManager.createSubTask(subTask2);
+//
+//        System.out.println("Подзадача 2 начата: " + subTask2.getStartTime().format(DateTimeFormatter.
+//                ofPattern("HH:mm | dd.MM.yyyy")) + "; длительность: " + subTask2.getDuration().toMinutes() +
+//                "; подзадача окончена: " + subTask2.getEndTime().format(DateTimeFormatter.
+//                ofPattern("HH:mm | dd.MM.yyyy")));
+//
+//        System.out.println("Эпик с подзадачами начат: " + epic1.getStartTime().format(DateTimeFormatter.
+//                ofPattern("HH:mm | dd.MM.yyyy")) + "; длительность: " + epic1.getDuration().toMinutes() +
+//                "; эпик с подзадачами окончен: " + epic1.getEndTime().format(DateTimeFormatter.
+//                ofPattern("HH:mm | dd.MM.yyyy")));
+//
+//        System.out.println("\nИзменение статуса различных типов задач----------------------------");
+//        subTask1.setStatus(Status.DONE);
+//        subTask2.setStatus(Status.DONE);
+//        simpleTask1.setStatus(Status.IN_PROGRESS);
+//        System.out.println("\nЗадачи----------------------------");
+//        for (Task task : fileBackedTasksManager.getSimpleTaskList())
+//            System.out.println(task);
+//        System.out.println("\nПодзадачи------------------------");
+//        for (Task task : fileBackedTasksManager.getSubTaskList()) {
+//            System.out.println(task);
+//        }
+//        System.out.println("\nЭпики-----------------------------");
+//        for (Task task : fileBackedTasksManager.getEpicList()) {
+//            System.out.println(task);
+//        }
+//
+//        fileBackedTasksManager.getSimpleTask(simpleTask1.getId());
+//        fileBackedTasksManager.getEpic(epic1.getId());
+////        fileBackedTasksManager.getSimpletask(1);
+//        System.out.println("\nИстория задач--------------------------");
+//        for (Task task : fileBackedTasksManager.getHistory()) {
+//            System.out.println(task);
+//        }
+//        System.out.println("\nОтсортированные задачи-----------------------");
+//        for (Task task : fileBackedTasksManager.getPrioritizedTasks()) {
+//            System.out.println(task);
+//        }
+//
+//        FileBackedTasksManager.loadFromFile(file);
+//    }
 }

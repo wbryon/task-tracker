@@ -5,20 +5,20 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class LocalDateAdapter extends TypeAdapter<LocalDate> {
-    private static final DateTimeFormatter formatterWriter = DateTimeFormatter.ofPattern("dd--MM--yyyy");
-    private static final DateTimeFormatter formatterReader = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+public class LocalDateAdapter extends TypeAdapter<LocalDateTime> {
+
+    public static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm | dd.MM.yyyy");
 
     @Override
-    public void write(final JsonWriter jsonWriter, final LocalDate localDate) throws IOException {
-        jsonWriter.value(localDate.format(formatterWriter));
+    public void write(final JsonWriter jsonWriter, final LocalDateTime localDatetime) throws IOException {
+        jsonWriter.value(localDatetime.format(formatter));
     }
 
     @Override
-    public LocalDate read(final JsonReader jsonReader) throws IOException {
-        return LocalDate.parse(jsonReader.nextString(), formatterReader);
+    public LocalDateTime read(final JsonReader jsonReader) throws IOException {
+        return LocalDateTime.parse(jsonReader.nextString(), formatter);
     }
 }

@@ -13,22 +13,17 @@ import java.net.http.HttpResponse;
 
 public class KVTaskClient {
     private String apiToken;
-    HttpClient client;
-    HttpResponse.BodyHandler<String> handler;
-    HttpResponse<String> response;
-    /**
-     * Конструктор принимает URL к серверу хранилища и регистрируется.
-     * При регистрации выдаётся токен (API_TOKEN), который нужен при работе с сервером.
-     *
-     * Конструктор создаёт объект, описывающий HTTP-запрос
-     */
-    public KVTaskClient(URI uri) throws IOException, InterruptedException {
+    private final HttpClient client;
+    private final HttpResponse.BodyHandler<String> handler;
+    private HttpResponse<String> response;
+
+    public KVTaskClient(URI uri) {
         client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
                 .uri(uri)
                 .version(HttpClient.Version.HTTP_1_1)
-                .header("Accept", "text/html")
+                .header("Content-Type", "application/json")
                 .build();
         handler = HttpResponse.BodyHandlers.ofString();
         try {
@@ -37,31 +32,28 @@ public class KVTaskClient {
         } catch (InterruptedException | IOException e) {
             System.out.println("Во время выполнения запроса возникла ошибка.\n" +
                     "Проверьте, пожалуйста, адрес и повторите попытку.");
+            e.printStackTrace();
         }
     }
 
-    /**
-     * Метод, сохраняющий состояние менеджера задач через запрос 'POST /save/<ключ>?API_TOKEN='
-     */
     public void put(String key, String json) throws IOException, InterruptedException {
-        URI uri = URI.create("http://localhost:8888/tasks/save/" + key + "?" + "API_TOKEN=" + apiToken);
+        URI uri = URI.create("http://localhost:8078/save/" + key + "?API_TOKEN=" + apiToken);
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .uri(uri)
                 .version(HttpClient.Version.HTTP_1_1)
+                .header("Content-Type", "application/json")
                 .build();
         client.send(request, handler);
     }
 
-    /**
-     * Метод, возвращающий состояние менеджера задач через запрос 'GET /load/<ключ>?API_TOKEN='
-     */
     public String load(String key) throws IOException, InterruptedException {
-        URI uri = URI.create("http://localhost:8888/tasks/load/" + key + "?" + "API_TOKEN=" + apiToken);
+        URI uri = URI.create("http://localhost:8078/load/" + key + "?API_TOKEN=" + apiToken);
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
                 .uri(uri)
                 .version(HttpClient.Version.HTTP_1_1)
+                .header("Content-Type", "application/json")
                 .build();
         response = client.send(request, handler);
         return response.body();
