@@ -1,6 +1,6 @@
 package controller;
 
-import client.KVTaskClient;
+import http.KVTaskClient;
 import com.google.gson.*;
 import model.*;
 
@@ -44,12 +44,12 @@ public class HttpTaskManager extends FileBackedTasksManager {
     }
 
     private void load() throws IOException, InterruptedException {
-        List<Task> simpleTaskList = getTasksFromJson(taskClient.load("task"));
+        List<Task> taskList = getTasksFromJson(taskClient.load("task"));
         List<Task> subTaskList = getTasksFromJson(taskClient.load("subtask"));
         List<Task> epicList = getTasksFromJson(taskClient.load("epic"));
         List<Task> history = getTasksFromJson(taskClient.load("history"));
         List<Task> prioritizedList = getTasksFromJson(taskClient.load("prioritizedTasks"));
-        simpleTaskList.forEach(task -> taskRepo.put(task.getId(), (SimpleTask) task));
+        taskList.forEach(task -> taskRepo.put(task.getId(), task));
         subTaskList.forEach(subtask -> subtaskRepo.put(subtask.getId(), (SubTask) subtask));
         epicList.forEach(epic -> epicRepo.put(epic.getId(), (Epic) epic));
         history.forEach(historyManager::add);
@@ -71,8 +71,8 @@ public class HttpTaskManager extends FileBackedTasksManager {
                         tasks.add(gson.fromJson(element, Epic.class));
                     else if (json.contains("epicId")) {
                         tasks.add(gson.fromJson(element, SubTask.class));
-                    }
-                    tasks.add(gson.fromJson(element, Task.class));
+                    } else
+                        tasks.add(gson.fromJson(element, Task.class));
                 }
             }
         }

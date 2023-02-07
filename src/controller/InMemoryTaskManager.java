@@ -6,7 +6,7 @@ import model.*;
 
 public class InMemoryTaskManager implements TaskManager {
     protected int generatorId = 0;
-    protected final Map<Integer, SimpleTask> taskRepo = new HashMap<>();
+    protected final Map<Integer, Task> taskRepo = new HashMap<>();
     protected final Map<Integer, Epic> epicRepo = new HashMap<>();
     protected final Map<Integer, SubTask> subtaskRepo = new HashMap<>();
     protected final Map<LocalDateTime, Task> mapOfPrioritizedTasks = new TreeMap<>();
@@ -19,11 +19,12 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Set<Task> allTasks = new TreeSet<>(compareTasksByStartTime);
 
     @Override
-    public int createSimpleTask(SimpleTask task) {
+    public int createTask(Task task) {
         task.setId(++generatorId);
         task.setStatus(Status.NEW);
         taskRepo.put(task.getId(), task);
         addTaskToPrioritizationList(task);
+        allTasks.add(task);
         return task.getId();
     }
 
@@ -35,6 +36,7 @@ public class InMemoryTaskManager implements TaskManager {
         setEpicEndTime(epic);
         setEpicDuration(epic);
         epicRepo.put(epic.getId(), epic);
+        allTasks.add(epic);
         return epic.getId();
     }
 
@@ -50,6 +52,7 @@ public class InMemoryTaskManager implements TaskManager {
         epic.addSubtaskId(subtask);
         updateEpicStatus(epic);
         updateEpicDuration(epic);
+        allTasks.add(subtask);
         return subtask.getId();
     }
 
@@ -59,14 +62,14 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public SimpleTask getSimpleTaskWithoutHistory(int id) {
+    public Task getTaskWithoutHistory(int id) {
         if (!taskRepo.containsKey(id))
             return null;
         return taskRepo.get(id);
     }
 
     @Override
-    public SimpleTask getSimpleTask(int id) {
+    public Task getTask(int id) {
         if (!taskRepo.containsKey(id))
             return null;
         historyManager.add(taskRepo.get(id));
@@ -104,7 +107,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteSimpleTask(int id) {
+    public void deleteTask(int id) {
         if (!taskRepo.containsKey(id))
             return;
         taskRepo.remove(id);
@@ -134,12 +137,12 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteAllSimpleTasks() {
+    public void deleteAllTasks() {
         if (taskRepo.isEmpty())
             return;
         for (Integer id : taskRepo.keySet())
             historyManager.remove(id);
-        for (SimpleTask task : taskRepo.values())
+        for (Task task : taskRepo.values())
             mapOfPrioritizedTasks.remove(task.getStartTime());
         taskRepo.clear();
     }
@@ -169,7 +172,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<SimpleTask> getSimpleTaskList() {
+    public ArrayList<Task> getTaskList() {
         return new ArrayList<>(taskRepo.values());
     }
 
@@ -189,10 +192,10 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public SimpleTask updateSimpleTask(SimpleTask task) {
-        SimpleTask result = null;
+    public Task updateTask(Task task) {
+        Task result = null;
         if (taskRepo.containsKey(task.getId())) {
-            final SimpleTask updatableTask = taskRepo.get(task.getId());
+            final Task updatableTask = taskRepo.get(task.getId());
             if (checkTasksForIntersectionsByTime(updatableTask)) {
                 updatableTask.setTaskName(task.getTaskName());
                 updatableTask.setTaskDescription(task.getTaskDescription());

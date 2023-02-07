@@ -28,21 +28,6 @@ public class Epic extends Task {
         subtasksIds.add(subTask.id);
     }
 
-    /**
-     * Переопределённый метод toString
-     */
-//    @Override
-//    public String toString() {
-//        return id + "," +
-//                "EPIC" + "," +
-//                taskName + "," +
-//                status + "," +
-//                taskDescription + "," +
-//                startTime + "," +
-//                duration + "," +
-//                getEndTime();
-//    }
-
     @Override
     public LocalDateTime getEndTime() {
         return endTime;
@@ -60,5 +45,19 @@ public class Epic extends Task {
     @Override
     public void setDuration(Duration duration) {
         super.setDuration(duration);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Epic epic = (Epic) o;
+        return Objects.equals(subtasksIds, epic.subtasksIds) && Objects.equals(endTime, epic.endTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), subtasksIds, endTime);
     }
 }
