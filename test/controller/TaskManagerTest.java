@@ -26,7 +26,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         task = new Task("Задача 1", "Описание задачи 1",
                 LocalDateTime.parse("09:00 | 09.01.2023", LocalDateAdapter.formatter), Duration.ofMinutes(60));
         epic = new Epic("Эпик 1", "Описание эпика 1");
-        taskContent = "1,SIMPLETASK,Задача 2,IN_PROGRESS,Описание задачи 2,2023-01-11T22:00,PT30M,2023-01-11T22:30";
+        taskContent = "1,TASK,Задача 2,IN_PROGRESS,Описание задачи 2,2023-01-11T22:00,PT30M,2023-01-11T22:30";
         epicContent = "1,EPIC,Эпик 2,NEW,Описание эпика 2,2023-01-10T10:00,PT15M,2023-01-10T10:15";
         subTaskContent = "2,SUBTASK,Подзадача 2,NEW,Описание подзадачи 2 эпика 1,2023-01-10T10:00,PT15M,2023-01-10T10:15,1";
     }

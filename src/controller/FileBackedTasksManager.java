@@ -46,7 +46,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             final String[] fields = value.split(",");
 
             switch (TaskType.valueOf(fields[1])) {
-                case SIMPLETASK:
+                case TASK:
                     task = new Task(fields[2], fields[4], LocalDateTime.parse(fields[5], LocalDateAdapter.formatter),
                             Duration.ofMinutes(Integer.parseInt(fields[7])));
                     task.setId(Integer.parseInt(fields[0]));
@@ -89,7 +89,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         task.getEndTime().format(LocalDateAdapter.formatter) + "," + task.getDuration().toMinutes() + "\n";
             }
             else
-                return task.getId() + "," + TaskType.SIMPLETASK + "," + task.getTaskName() + "," +
+                return task.getId() + "," + TaskType.TASK + "," + task.getTaskName() + "," +
                         task.getStatus() + "," + task.getTaskDescription() + "," + task.getStartTime().
                         format(LocalDateAdapter.formatter) + "," + task.getEndTime().format(LocalDateAdapter.formatter) + "," +
                         task.getDuration().toMinutes() + "\n";
@@ -145,7 +145,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     }
                     return;
                 }
-                if (task instanceof Task) {
+                if (task != null) {
                     taskRepo.put(id, task);
                     mapOfPrioritizedTasks.put(task.getStartTime(), task);
                     return;
@@ -325,7 +325,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     private enum TaskType {
-        SIMPLETASK, EPIC, SUBTASK
+        TASK, EPIC, SUBTASK
     }
 
     @Override

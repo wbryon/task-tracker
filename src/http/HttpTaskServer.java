@@ -37,7 +37,7 @@ public class HttpTaskServer {
             switch (requestMethod) {
                 case "GET":
                     if (Pattern.matches("/tasks/task", path)) {
-                        return Endpoint.GET_SIMPLETASKS;
+                        return Endpoint.GET_TASKS;
                     } else if (Pattern.matches("/tasks/subtask", path)) {
                         return Endpoint.GET_SUBTASKS;
                     } else if (Pattern.matches("/tasks/epic", path)) {
@@ -45,7 +45,7 @@ public class HttpTaskServer {
                     } else if (Pattern.matches("/tasks/*", path)) {
                         return Endpoint.GET_ALL_TASKS;
                     } else if (Pattern.matches("/tasks/task/id=\\d*", path + query)) {
-                        return Endpoint.GET_SIMPLETASK_BY_ID;
+                        return Endpoint.GET_TASK_BY_ID;
                     } else if (Pattern.matches("/tasks/subtask/id=\\d*", path + query)) {
                         return Endpoint.GET_SUBTASK_BY_ID;
                     } else if (Pattern.matches("/tasks/epic/id=\\d*", path + query)) {
@@ -73,7 +73,7 @@ public class HttpTaskServer {
                     } else if (Pattern.matches("/tasks/epic/id=\\d*", path + query)) {
                         return Endpoint.DELETE_EPIC;
                     } else if (Pattern.matches("/tasks/task", path)) {
-                        return Endpoint.DELETE_SIMPLETASKS;
+                        return Endpoint.DELETE_TASKS;
                     } else if (Pattern.matches("/tasks/subtask", path)) {
                         return Endpoint.DELETE_SUBTASKS;
                     } else if (Pattern.matches("/tasks/epic", path)) {
@@ -101,7 +101,7 @@ public class HttpTaskServer {
                 Endpoint endpoint = getEndpoint(path, query, method);
 
                 switch (endpoint) {
-                    case GET_SIMPLETASKS:
+                    case GET_TASKS:
                         response = gson.toJson(taskManager.getTaskList());
                         sendText(exchange, response);
                         break;
@@ -117,7 +117,7 @@ public class HttpTaskServer {
                         response = gson.toJson(taskManager.getPrioritizedTasks());
                         sendText(exchange, response);
                         break;
-                    case GET_SIMPLETASK_BY_ID:
+                    case GET_TASK_BY_ID:
                         taskId = Integer.parseInt(query.substring(3));
                         if (taskId != -1) {
                             response = gson.toJson(taskManager.getTask(taskId));
@@ -235,7 +235,7 @@ public class HttpTaskServer {
                             exchange.sendResponseHeaders(200, 0);
                         }
                         break;
-                    case DELETE_SIMPLETASKS:
+                    case DELETE_TASKS:
                         taskManager.deleteAllTasks();
                         exchange.sendResponseHeaders(200, 0);
                         break;
