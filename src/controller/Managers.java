@@ -1,5 +1,8 @@
 package controller;
 
+import http.KVServer;
+
+import java.io.IOException;
 import java.net.URI;
 
 /**
@@ -19,5 +22,12 @@ public class Managers {
      */
     public static HistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();
+    }
+
+    /**
+     * Метод, возвращающий экземпляр хранилища клиентов
+     */
+    public static KVServer getDefaultKVServer() throws IOException {
+        return new KVServer();
     }
 }

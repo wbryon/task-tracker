@@ -1,3 +1,4 @@
+import controller.Managers;
 import http.KVServer;
 
 import java.io.IOException;
@@ -12,6 +13,6 @@ public class Main {
      * точка входа в программу
      */
     public static void main(String[] args) throws IOException {
-        new KVServer().start();
+        Managers.getDefaultKVServer().start();
     }
 }
